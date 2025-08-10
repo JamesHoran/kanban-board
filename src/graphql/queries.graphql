@@ -1,6 +1,6 @@
-query GetCountries {
-  countries {
-    code
+query GetBoards {
+  boards {
+    id
     name
   }
 }
