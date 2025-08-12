@@ -1,0 +1,7 @@
+table:
+  name: cards
+  schema: public
+object_relationships:
+  - name: column
+    using:
+      foreign_key_constraint_on: column_id

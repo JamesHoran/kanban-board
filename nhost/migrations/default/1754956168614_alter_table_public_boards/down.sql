@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration
+-- Please write an appropriate down migration for the SQL below:
+-- ALTER TABLE public.boards ALTER COLUMN id SET DEFAULT gen_random_uuid();
+-- ALTER TABLE public.boards ALTER COLUMN created_at SET DEFAULT now();
