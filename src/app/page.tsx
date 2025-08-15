@@ -1,26 +1,3 @@
-// import About from "./about/page";
-// import Link from "next/link";
-
-// export default function Home() {
-//   let userIsSignedIn = false;
-//   if (userIsSignedIn) {
-//     return (
-//       <>
-//         <button>
-//           <Link href="/boards">Boards</Link>
-//           <Link href="/logout">Logout</Link>
-//         </button>
-//       </>
-//     );
-//   } else {
-//     return (
-//       <>
-//         <p>You are not signed in, would you like to sign in below?</p>
-//       </>
-//     );
-//   }
-// }
-
 "use client";
 
 import Link from "next/link";

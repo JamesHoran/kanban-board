@@ -13,3 +13,39 @@ array_relationships:
         table:
           name: cards
           schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - id
+        - board_id
+        - name
+        - position
+        - created_at
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - board_id
+        - name
+        - position
+        - created_at
+      filter: {}
+      allow_aggregations: true
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - board_id
+        - name
+        - position
+        - created_at
+      filter: {}
+      check: null
+delete_permissions:
+  - role: user
+    permission:
+      filter: {}

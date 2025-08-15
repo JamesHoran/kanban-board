@@ -5,3 +5,42 @@ object_relationships:
   - name: column
     using:
       foreign_key_constraint_on: column_id
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - id
+        - column_id
+        - title
+        - description
+        - position
+        - created_at
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - column_id
+        - title
+        - description
+        - position
+        - created_at
+      filter: {}
+      allow_aggregations: true
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - column_id
+        - title
+        - description
+        - position
+        - created_at
+      filter: {}
+      check: null
+delete_permissions:
+  - role: user
+    permission:
+      filter: {}

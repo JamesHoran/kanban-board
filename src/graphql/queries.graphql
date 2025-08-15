@@ -1,6 +1,90 @@
-query GetBoards {
-  boards {
+mutation CreateBoard($name: String!, $owner_id: uuid!) {
+  insert_boards_one(object: { name: $name, owner_id: $owner_id }) {
+    owner_id
+    name
+  }
+}
+
+mutation CreateColumn($board_id: uuid!, $name: String!, $position: float8) {
+  insert_columns_one(object: { board_id: $board_id, name: $name, position: $position }) {
     id
     name
+    position
+  }
+}
+
+mutation CreateCard($column_id: uuid!, $title: String!, $position: float8, $description: String) {
+  insert_cards_one(object: { column_id: $column_id, title: $title, position: $position, description: $description }) {
+    id
+    title
+    position
+    description
+  }
+}
+
+subscription GetBoardsForUser {
+  boards(order_by: { created_at: asc }) {
+    id
+    name
+    created_at
+    columns(order_by: { position: asc }) {
+      id
+      name
+      position
+      cards(order_by: { position: asc }) {
+        id
+        title
+        description
+        position
+      }
+    }
+  }
+}
+
+mutation UpdateBoard($id: uuid!, $patch: boards_set_input!) {
+  update_boards_by_pk(pk_columns: { id: $id }, _set: $patch) {
+    id
+    name
+  }
+}
+
+mutation UpdateCard($id: uuid!, $patch: cards_set_input!) {
+  update_cards_by_pk(pk_columns: { id: $id }, _set: $patch) {
+    id
+    title
+    position
+    description
+    column_id
+  }
+}
+
+mutation UpdateColumn($id: uuid!, $patch: columns_set_input!) {
+  update_columns_by_pk(pk_columns: { id: $id }, _set: $patch) {
+    id
+    name
+  }
+}
+
+mutation UpdateCardPosition($id: uuid!, $column_id: uuid!, $position: float8!) {
+  update_cards_by_pk(pk_columns: { id: $id }, _set: { column_id: $column_id, position: $position }) {
+    id
+  }
+}
+
+mutation DeleteCard($id: uuid!) {
+  delete_cards_by_pk(id: $id) {
+    id
+  }
+}
+
+mutation DeleteBoard($board_id: uuid!) {
+  delete_boards_by_pk(id: $board_id) {
+    id
+  }
+}
+
+mutation DeleteColumn($id: uuid!) {
+  delete_columns_by_pk(id: $id) {
+    id
   }
 }
