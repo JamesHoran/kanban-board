@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { nhost } from "@/lib/nhost";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,6 +12,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Check if the user is already authenticated on page load.
+  // The useEffect hook runs once when the component mounts.
+  useEffect(() => {
+    if (nhost.auth.isAuthenticated()) {
+      router.push("/"); // Redirect to the boards page
+    }
+  }, [router]); // `router` is a dependency to ensure the effect can access the latest router instance.
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +36,7 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      router.push("/"); // Redirect to home/dashboard
+      router.push("/"); // Redirect to the boards page on successful login
     }
   };
 

@@ -14,6 +14,26 @@ import { Toaster } from "@/components/ui/sonner";
 // Import the generated GraphQL document nodes
 import { GetBoardsForUserDocument, CreateBoardDocument } from "@/gql/graphql";
 
+interface Card {
+  id: string;
+  position: number;
+  title: string;
+  description?: string | null;
+}
+
+interface Column {
+  id: string;
+  position: number;
+  name: string;
+  cards: Card[];
+}
+
+interface Board {
+  id: string;
+  name: string;
+  columns: Column[];
+}
+
 export default function BoardsPage() {
   // Use the imported document with useSubscription
   const { data, loading, error } = useSubscription(GetBoardsForUserDocument);
@@ -23,6 +43,7 @@ export default function BoardsPage() {
 
   const [name, setName] = useState("");
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
+  const [localBoards, setLocalBoards] = useState<Board[]>([]);
 
   useEffect(() => {
     if (data?.boards) {
@@ -37,12 +58,16 @@ export default function BoardsPage() {
     }
   }, [data, selectedBoardId]);
 
-  const handleCreate = async () => {
-    if (!name.trim()) {
-      toast.error("Board name cannot be empty.");
-      return;
+  useEffect(() => {
+    if (data?.boards) {
+      setLocalBoards(data.boards);
+      if (!selectedBoardId && data.boards.length > 0) {
+        setSelectedBoardId(data.boards[0].id);
+      }
     }
+  }, [data, selectedBoardId]);
 
+  const handleCreate = async () => {
     const user = nhost.auth.getUser();
 
     if (!user) {
@@ -51,21 +76,45 @@ export default function BoardsPage() {
       return;
     }
 
+    if (!name.trim()) return;
+
+    // 1. Optimistic UI Update: Create a temporary board and add it to the local state
+    const tempId = `temp-${Date.now()}`;
+    const newBoard: Board = {
+      id: tempId,
+      name: name.trim(),
+      columns: [],
+    };
+
+    setLocalBoards(prevBoards => [...prevBoards, newBoard]);
+    setSelectedBoardId(tempId);
+    setName("");
+
     try {
-      const owner_id = user.id;
-      await createBoard({ variables: { name, owner_id } });
-      toast.success(`Board "${name}" created successfully!`);
-      setName("");
+      // 2. Perform the GraphQL mutation
+      const { data: mutationData } = await createBoard({
+        variables: { name: newBoard.name, owner_id: user.id },
+      });
+
+      // 3. On success: Update the temporary board with the real ID from the server
+      if (mutationData?.insert_boards_one) {
+        const realBoard = mutationData.insert_boards_one;
+        setLocalBoards(prevBoards => prevBoards.map(board => (board.id === tempId ? { ...board, id: realBoard.id } : board)));
+        setSelectedBoardId(realBoard.id);
+      }
     } catch (createError) {
       console.error("Error creating board:", createError);
-      toast.error("Failed to create board. Please try again.");
+      // 4. On failure: Revert the local state by removing the temporary board
+      setLocalBoards(prevBoards => prevBoards.filter(board => board.id !== tempId));
+      setSelectedBoardId(null);
     }
   };
 
   if (loading) return <p>Loading boards...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const boards = data?.boards ?? [];
+  // const boards = data?.boards ?? [];
+  const boards = localBoards;
   const selectedBoard = boards.find(board => board.id === selectedBoardId);
 
   return (
@@ -97,7 +146,7 @@ export default function BoardsPage() {
         </div>
       </header>
 
-      <div className="space-y-6">{selectedBoard ? <BoardView key={selectedBoard.id} board={selectedBoard} /> : <p className="text-center text-gray-500 mt-12">No boards yet—create one above.</p>}</div>
+      <div className="space-y-6">{selectedBoard ? <BoardView key={selectedBoard.id} initialBoard={selectedBoard} /> : <p className="text-center text-gray-500 mt-12">No boards yet—create one above.</p>}</div>
       <Toaster position="bottom-right" />
     </div>
   );

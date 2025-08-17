@@ -1,6 +1,6 @@
 mutation CreateBoard($name: String!, $owner_id: uuid!) {
   insert_boards_one(object: { name: $name, owner_id: $owner_id }) {
-    owner_id
+    id
     name
   }
 }
@@ -62,6 +62,13 @@ mutation UpdateColumn($id: uuid!, $patch: columns_set_input!) {
   update_columns_by_pk(pk_columns: { id: $id }, _set: $patch) {
     id
     name
+  }
+}
+
+mutation UpdateColumnPosition($id: uuid!, $position: float8!) {
+  update_columns_by_pk(pk_columns: { id: $id }, _set: { position: $position }) {
+    id
+    position
   }
 }
 

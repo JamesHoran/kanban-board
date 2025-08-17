@@ -35,31 +35,33 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-## Init and log into nhost
+## Install
 
-`pnpm nhost init`
+`pnpm install`
 
-## Database Setup
+## Login to nhost
 
-1. Create tables: `boards`, `columns`, `cards` in Nhost where the cards (cols of id: uuid, name: text, column_id: uuid, description: text) have a fk to columns (cols of id: uuid, name: text, board_id: uuid) and columns has an fk to boards (cols of id: uuid, name: text). Ensure cascade delete is enabled for PKs.
-2. Change permissions for users to update, select, delete, insert
+`pnpm nhost login`
 
 ## Setup your env.local file
 
-npm install @next/env
+kanban-board/.secrets:
 
-envConfig.ts: `
-import { loadEnvConfig } from '@next/env'
+`HASURA_GRAPHQL_ADMIN_SECRET=yoursecrethere`
+`HASURA_GRAPHQL_JWT_SECRET=yourJWThere`
 
-const projectDir = process.cwd()
-loadEnvConfig(projectDir)
-`
+kanban-board/.env:
 
-import env vars with, 'import './envConfig.ts''
+`NEXT_PUBLIC_NHOST_SUBDOMAIN=yoursubdomainhere`
+`NEXT_PUBLIC_NHOST_REGION=yourregionhere`
+`ADMIN_KEY=youradminkeyhere`
 
-.env.local, '
-NEXT_PUBLIC_NHOST_SUBDOMAIN=your-project-subdomain
-NEXT_PUBLIC_NHOST_REGION=your-region
-'
+## run dev
 
-## Run `pnpm run codegen` to generate code
+`pnpm run dev`
+
+# to do
+
+## sinc the local db wi the cloud db
+
+## test everything in a new git repo using the cloud

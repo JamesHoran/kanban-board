@@ -1,35 +1,40 @@
 "use client";
 
-import { gql, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-const UPDATE_CARD = gql`
-  mutation UpdateCard($id: uuid!, $patch: cards_set_input!) {
-    update_cards_by_pk(pk_columns: { id: $id }, _set: $patch) {
-      id
-      title
-      description
-    }
-  }
-`;
+interface Card {
+  id: string;
+  position: number;
+  title: string;
+  description?: string | null;
+}
+
+interface Column {
+  id: string;
+  position: number;
+  name: string;
+  cards: Card[];
+}
 
 interface CardDetailsModalProps {
   card: {
     id: string;
+    position: number;
     title: string;
-    description?: string;
+    description?: string | null;
   };
+  column: Column;
   onClose: () => void;
+  onUpdateCard: (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => void;
 }
 
-export default function CardDetailsModal({ card, onClose }: CardDetailsModalProps) {
+export default function CardDetailsModal({ card, column, onClose, onUpdateCard }: CardDetailsModalProps) {
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description || "");
-  const [updateCard] = useMutation(UPDATE_CARD);
 
   // Synchronize state with the 'card' prop
   useEffect(() => {
@@ -38,11 +43,7 @@ export default function CardDetailsModal({ card, onClose }: CardDetailsModalProp
   }, [card]);
 
   const handleSave = async () => {
-    const patch = {
-      title,
-      description,
-    };
-    await updateCard({ variables: { id: card.id, patch } });
+    onUpdateCard(card.id, column.id, { title: title, description: description });
     onClose();
   };
 

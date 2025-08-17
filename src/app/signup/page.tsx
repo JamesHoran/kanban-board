@@ -29,7 +29,7 @@ export default function SignupPage() {
     } else {
       setSuccess(true);
       // Optionally redirect after a delay
-      setTimeout(() => router.push("/login"), 2000);
+      setTimeout(() => router.push("/boards"), 2000);
     }
   };
 
