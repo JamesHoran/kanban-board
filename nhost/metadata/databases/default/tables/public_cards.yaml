@@ -5,6 +5,14 @@ object_relationships:
   - name: column
     using:
       foreign_key_constraint_on: column_id
+array_relationships:
+  - name: card_labels
+    using:
+      foreign_key_constraint_on:
+        column: card_id
+        table:
+          name: card_labels
+          schema: public
 insert_permissions:
   - role: user
     permission:

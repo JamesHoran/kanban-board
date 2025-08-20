@@ -1,0 +1,41 @@
+table:
+  name: card_labels
+  schema: public
+object_relationships:
+  - name: card
+    using:
+      foreign_key_constraint_on: card_id
+  - name: label
+    using:
+      foreign_key_constraint_on: label_id
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - card_id
+        - label_id
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - card_id
+        - label_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - card_id
+        - label_id
+      filter: {}
+      check: {}
+    comment: ""
+delete_permissions:
+  - role: user
+    permission:
+      filter: {}
+    comment: ""

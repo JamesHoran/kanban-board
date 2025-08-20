@@ -24,3 +24,18 @@ create table cards (
   position double precision not null default 1000.0,
   created_at timestamptz default now()
 );
+
+create table labels (
+  id uuid primary key default gen_random_uuid(),
+  board_id uuid references boards(id) on delete cascade,
+  name text not null,
+  color text not null,
+  created_by uuid references auth.users(id),
+  created_at timestamptz default now()
+);
+
+create table card_labels (
+  card_id uuid references cards(id) on delete cascade,
+  label_id uuid references labels(id) on delete cascade,
+  primary key (card_id, label_id)
+);

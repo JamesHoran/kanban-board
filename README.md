@@ -65,3 +65,7 @@ kanban-board/.env:
 ## sinc the local db wi the cloud db
 
 ## test everything in a new git repo using the cloud
+
+## lint
+
+## set up project to be hosted on verecel or whatever that is

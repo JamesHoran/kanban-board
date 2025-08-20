@@ -1,51 +1,61 @@
 table:
-  name: boards
+  name: labels
   schema: public
+object_relationships:
+  - name: board
+    using:
+      foreign_key_constraint_on: board_id
+  - name: user
+    using:
+      foreign_key_constraint_on: created_by
 array_relationships:
-  - name: columns
+  - name: card_labels
     using:
       foreign_key_constraint_on:
-        column: board_id
+        column: label_id
         table:
-          name: columns
-          schema: public
-  - name: labels
-    using:
-      foreign_key_constraint_on:
-        column: board_id
-        table:
-          name: labels
+          name: card_labels
           schema: public
 insert_permissions:
   - role: user
     permission:
       check: {}
       columns:
-        - id
+        - color
         - name
-        - owner_id
         - created_at
+        - board_id
+        - created_by
+        - id
+    comment: ""
 select_permissions:
   - role: user
     permission:
       columns:
-        - id
+        - color
         - name
-        - owner_id
         - created_at
+        - board_id
+        - created_by
+        - id
       filter: {}
       allow_aggregations: true
+    comment: ""
 update_permissions:
   - role: user
     permission:
       columns:
-        - id
+        - color
         - name
-        - owner_id
         - created_at
+        - board_id
+        - created_by
+        - id
       filter: {}
-      check: null
+      check: {}
+    comment: ""
 delete_permissions:
   - role: user
     permission:
       filter: {}
+    comment: ""

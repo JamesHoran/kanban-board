@@ -43,6 +43,105 @@ const splitLink = split(
   httpLink
 );
 
+export const cache = new InMemoryCache({
+  typePolicies: {
+    Subscription: {
+      fields: {
+        boards: {
+          merge(existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    labels: {
+      keyFields: ["id"],
+    },
+    card_labels: {
+      keyFields: ["card_id"],
+    },
+    cards: {
+      keyFields: ["id"],
+      fields: {
+        card_labels: {
+          merge(existing, incoming) {
+            return incoming;
+          },
+        },
+        // cards: {
+        //   merge(existing: any[] = [], incoming: any[], { readField }) {
+        //     const merged = [...existing];
+
+        //     incoming.forEach(card => {
+        //       const id = readField("id", card);
+        //       const index = merged.findIndex(c => readField("id", c) === id);
+
+        //       if (index > -1) {
+        //         // Update existing card
+        //         merged[index] = card;
+        //       } else {
+        //         // Add new card
+        //         merged.push(card);
+        //       }
+        //     });
+
+        //     return merged;
+        //   },
+        // },
+      },
+    },
+    boards: {
+      keyFields: ["id"],
+      fields: {
+        labels: {
+          merge(existing: any[] = [], incoming: any[], { readField }) {
+            const merged = [...existing];
+
+            incoming.forEach(label => {
+              const id = readField("id", label);
+              const index = merged.findIndex(l => readField("id", l) === id);
+              if (index > -1) {
+                // Replace existing label with updated data
+                merged[index] = label;
+              } else {
+                // Add new label
+                merged.push(label);
+              }
+            });
+
+            return merged;
+          },
+        },
+      },
+    },
+    columns: {
+      keyFields: ["id"],
+      fields: {
+        cards: {
+          merge(existing: any[] = [], incoming: any[], { readField }) {
+            const merged = [...existing];
+
+            incoming.forEach(card => {
+              const id = readField("id", card);
+              const index = merged.findIndex(c => readField("id", c) === id);
+
+              if (index > -1) {
+                // Update existing card
+                merged[index] = card;
+              } else {
+                // Add new card
+                merged.push(card);
+              }
+            });
+
+            return merged;
+          },
+        },
+      },
+    },
+  },
+});
+
 export const authTokenVar = makeVar<string | undefined>(undefined);
 
 const authLink = setContext(async (_, { headers }) => {
@@ -58,5 +157,6 @@ const authLink = setContext(async (_, { headers }) => {
 export const apolloClient = new ApolloClient({
   // Use the authLink and the splitLink together
   link: authLink.concat(splitLink),
-  cache: new InMemoryCache(),
+  // cache: new InMemoryCache(),
+  cache: cache,
 });

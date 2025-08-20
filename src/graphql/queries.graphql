@@ -22,11 +22,10 @@ mutation CreateCard($column_id: uuid!, $title: String!, $position: float8, $desc
   }
 }
 
-subscription GetBoardsForUser {
-  boards(order_by: { created_at: asc }) {
+subscription GetBoardsForUser($userId: uuid!) {
+  boards(where: { owner_id: { _eq: $userId } }) {
     id
     name
-    created_at
     columns(order_by: { position: asc }) {
       id
       name
@@ -36,7 +35,20 @@ subscription GetBoardsForUser {
         title
         description
         position
+        card_labels {
+          card_id
+          label {
+            id
+            name
+            color
+          }
+        }
       }
+    }
+    labels {
+      id
+      name
+      color
     }
   }
 }
@@ -93,5 +105,38 @@ mutation DeleteBoard($board_id: uuid!) {
 mutation DeleteColumn($id: uuid!) {
   delete_columns_by_pk(id: $id) {
     id
+  }
+}
+
+mutation CreateLabel($board_id: uuid!, $name: String!, $color: String!) {
+  insert_labels_one(object: { board_id: $board_id, name: $name, color: $color }) {
+    id
+    name
+    color
+  }
+}
+
+mutation AssignLabelToCard($card_id: uuid!, $label_id: uuid!) {
+  insert_card_labels_one(object: { card_id: $card_id, label_id: $label_id }) {
+    card_id
+    label_id
+  }
+}
+
+mutation RemoveLabelFromCard($card_id: uuid!, $label_id: uuid!) {
+  delete_card_labels(where: { card_id: { _eq: $card_id }, label_id: { _eq: $label_id } }) {
+    affected_rows
+  }
+}
+
+mutation DeleteLabel($id: uuid!) {
+  delete_labels_by_pk(id: $id) {
+    id
+  }
+}
+
+mutation DeleteCardLabelsByLabelId($label_id: uuid!) {
+  delete_card_labels(where: { label_id: { _eq: $label_id } }) {
+    affected_rows
   }
 }

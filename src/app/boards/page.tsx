@@ -7,18 +7,20 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import BoardView from "./BoardView";
-import { nhost } from "@/lib/nhost";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { useUserData } from "@nhost/nextjs";
+import { BoardProvider } from "./BoardContext";
 
 // Import the generated GraphQL document nodes
-import { GetBoardsForUserDocument, CreateBoardDocument } from "@/gql/graphql";
+import { GetBoardsForUserDocument, CreateBoardDocument, DeleteBoardDocument } from "@/gql/graphql";
 
 interface Card {
   id: string;
   position: number;
   title: string;
   description?: string | null;
+  card_labels: any;
 }
 
 interface Column {
@@ -32,18 +34,26 @@ interface Board {
   id: string;
   name: string;
   columns: Column[];
+  labels: { id: string; name: string; color: string }[];
 }
 
 export default function BoardsPage() {
   // Use the imported document with useSubscription
-  const { data, loading, error } = useSubscription(GetBoardsForUserDocument);
+  const userData = useUserData();
+
+  const { data, loading, error } = useSubscription(GetBoardsForUserDocument, {
+    skip: !userData,
+    variables: { userId: userData?.id }, // Use optional chaining to prevent an error
+  });
 
   // Use the imported document with useMutation
   const [createBoard] = useMutation(CreateBoardDocument);
+  const [deleteBoard] = useMutation(DeleteBoardDocument);
 
   const [name, setName] = useState("");
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
   const [localBoards, setLocalBoards] = useState<Board[]>([]);
+  const selectedBoard = localBoards.find(board => board.id === selectedBoardId);
 
   useEffect(() => {
     if (data?.boards) {
@@ -67,68 +77,89 @@ export default function BoardsPage() {
     }
   }, [data, selectedBoardId]);
 
+  if (!userData) {
+    return <div>Loading user data...</div>;
+  }
+
   const handleCreate = async () => {
-    const user = nhost.auth.getUser();
+    if (!name.trim() || !userData) return;
 
-    if (!user) {
-      console.error("User not authenticated.");
-      toast.error("User not authenticated. Please log in.");
-      return;
-    }
-
-    if (!name.trim()) return;
-
-    // 1. Optimistic UI Update: Create a temporary board and add it to the local state
-    const tempId = `temp-${Date.now()}`;
-    const newBoard: Board = {
+    // 1. Optimistically add the new board with a temporary ID
+    const tempId = `temp-id-board-${Date.now()}`;
+    const newBoard = {
       id: tempId,
-      name: name.trim(),
+      name,
       columns: [],
+      labels: [],
     };
 
     setLocalBoards(prevBoards => [...prevBoards, newBoard]);
-    setSelectedBoardId(tempId);
     setName("");
+    setSelectedBoardId(tempId); // Select the new board optimistically
 
     try {
-      // 2. Perform the GraphQL mutation
-      const { data: mutationData } = await createBoard({
-        variables: { name: newBoard.name, owner_id: user.id },
+      // 2. Call the mutation to create the real board in the database
+      const { data } = await createBoard({
+        variables: { name, owner_id: userData.id },
       });
 
-      // 3. On success: Update the temporary board with the real ID from the server
-      if (mutationData?.insert_boards_one) {
-        const realBoard = mutationData.insert_boards_one;
-        setLocalBoards(prevBoards => prevBoards.map(board => (board.id === tempId ? { ...board, id: realBoard.id } : board)));
-        setSelectedBoardId(realBoard.id);
+      const newBoardId = data?.insert_boards_one?.id;
+
+      if (newBoardId) {
+        // 3. Update the state with the real ID from the server
+        setLocalBoards(prevBoards => prevBoards.map(board => (board.id === tempId ? { ...board, id: newBoardId } : board)));
+        setSelectedBoardId(newBoardId); // Select the real ID
+        toast.success("Board created successfully!");
+      } else {
+        throw new Error("Could not create a new board");
       }
-    } catch (createError) {
-      console.error("Error creating board:", createError);
-      // 4. On failure: Revert the local state by removing the temporary board
+    } catch (error) {
+      console.error("Error creating board:", error);
+      toast.error("Failed to create board.");
+      // Rollback the optimistic update on error
       setLocalBoards(prevBoards => prevBoards.filter(board => board.id !== tempId));
       setSelectedBoardId(null);
+    }
+  };
+
+  const handleDeleteLocalBoard = async () => {
+    if (!selectedBoardId) return;
+
+    const boardToDeleteId = selectedBoardId;
+    const previousBoards = localBoards;
+
+    // Optimistically remove the board from the local state
+    setLocalBoards(prevBoards => prevBoards.filter(board => board.id !== boardToDeleteId));
+    setSelectedBoardId(null);
+
+    try {
+      if (window.confirm("Are you sure you want to delete this board with it's labels, cards, and column?")) {
+        await deleteBoard({ variables: { board_id: boardToDeleteId } });
+      }
+      toast.success("Board deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting board:", error);
+      toast.error("Failed to delete board. Restoring...");
+      // Rollback the optimistic update on error
+      setLocalBoards(previousBoards);
+      setSelectedBoardId(boardToDeleteId);
     }
   };
 
   if (loading) return <p>Loading boards...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // const boards = data?.boards ?? [];
-  const boards = localBoards;
-  const selectedBoard = boards.find(board => board.id === selectedBoardId);
-
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 p-4 bg-white rounded-lg shadow-md">
+    <div className="min-h-screen flex flex-col">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 p-3 bg-white">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold text-gray-800">Boards</h1>
-          {boards.length > 0 && (
-            <Select onValueChange={setSelectedBoardId} value={selectedBoardId || ""}>
+          {localBoards.length > 0 && (
+            <Select value={selectedBoardId || ""} onValueChange={value => setSelectedBoardId(value)}>
               <SelectTrigger className="w-[180px] border-gray-300 rounded-lg">
                 <SelectValue placeholder="Select a board" />
               </SelectTrigger>
               <SelectContent>
-                {boards.map(board => (
+                {localBoards.map(board => (
                   <SelectItem key={board.id} value={board.id}>
                     {board.name}
                   </SelectItem>
@@ -146,7 +177,15 @@ export default function BoardsPage() {
         </div>
       </header>
 
-      <div className="space-y-6">{selectedBoard ? <BoardView key={selectedBoard.id} initialBoard={selectedBoard} /> : <p className="text-center text-gray-500 mt-12">No boards yet—create one above.</p>}</div>
+      <main className="space-y-6 grow flex">
+        {selectedBoard ? (
+          <BoardProvider key={selectedBoardId} initialBoard={selectedBoard}>
+            <BoardView handleDeleteLocalBoard={handleDeleteLocalBoard} />
+          </BoardProvider>
+        ) : (
+          <p className="flex grow justify-center text-gray-500 mt-12">No boards yet—create one above.</p>
+        )}
+      </main>
       <Toaster position="bottom-right" />
     </div>
   );

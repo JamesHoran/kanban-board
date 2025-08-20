@@ -1909,6 +1909,10 @@ export type Boards = {
   columns_aggregate: Columns_Aggregate;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   id: Scalars['uuid']['output'];
+  /** An array relationship */
+  labels: Array<Labels>;
+  /** An aggregate relationship */
+  labels_aggregate: Labels_Aggregate;
   name: Scalars['String']['output'];
   owner_id: Scalars['uuid']['output'];
 };
@@ -1931,6 +1935,26 @@ export type BoardsColumns_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Columns_Order_By>>;
   where?: InputMaybe<Columns_Bool_Exp>;
+};
+
+
+/** columns and relationships of "boards" */
+export type BoardsLabelsArgs = {
+  distinct_on?: InputMaybe<Array<Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Labels_Order_By>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
+};
+
+
+/** columns and relationships of "boards" */
+export type BoardsLabels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Labels_Order_By>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
 };
 
 /** aggregated selection of "boards" */
@@ -1964,6 +1988,8 @@ export type Boards_Bool_Exp = {
   columns_aggregate?: InputMaybe<Columns_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  labels?: InputMaybe<Labels_Bool_Exp>;
+  labels_aggregate?: InputMaybe<Labels_Aggregate_Bool_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   owner_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
@@ -1979,6 +2005,7 @@ export type Boards_Insert_Input = {
   columns?: InputMaybe<Columns_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
+  labels?: InputMaybe<Labels_Arr_Rel_Insert_Input>;
   name?: InputMaybe<Scalars['String']['input']>;
   owner_id?: InputMaybe<Scalars['uuid']['input']>;
 };
@@ -2029,6 +2056,7 @@ export type Boards_Order_By = {
   columns_aggregate?: InputMaybe<Columns_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  labels_aggregate?: InputMaybe<Labels_Aggregate_Order_By>;
   name?: InputMaybe<Order_By>;
   owner_id?: InputMaybe<Order_By>;
 };
@@ -2426,9 +2454,195 @@ export type Bytea_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['bytea']['input']>>;
 };
 
+/** columns and relationships of "card_labels" */
+export type Card_Labels = {
+  __typename?: 'card_labels';
+  /** An object relationship */
+  card: Cards;
+  card_id: Scalars['uuid']['output'];
+  /** An object relationship */
+  label: Labels;
+  label_id: Scalars['uuid']['output'];
+};
+
+/** aggregated selection of "card_labels" */
+export type Card_Labels_Aggregate = {
+  __typename?: 'card_labels_aggregate';
+  aggregate?: Maybe<Card_Labels_Aggregate_Fields>;
+  nodes: Array<Card_Labels>;
+};
+
+export type Card_Labels_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Card_Labels_Aggregate_Bool_Exp_Count>;
+};
+
+export type Card_Labels_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Card_Labels_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "card_labels" */
+export type Card_Labels_Aggregate_Fields = {
+  __typename?: 'card_labels_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Card_Labels_Max_Fields>;
+  min?: Maybe<Card_Labels_Min_Fields>;
+};
+
+
+/** aggregate fields of "card_labels" */
+export type Card_Labels_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "card_labels" */
+export type Card_Labels_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Card_Labels_Max_Order_By>;
+  min?: InputMaybe<Card_Labels_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "card_labels" */
+export type Card_Labels_Arr_Rel_Insert_Input = {
+  data: Array<Card_Labels_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Card_Labels_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "card_labels". All fields are combined with a logical 'AND'. */
+export type Card_Labels_Bool_Exp = {
+  _and?: InputMaybe<Array<Card_Labels_Bool_Exp>>;
+  _not?: InputMaybe<Card_Labels_Bool_Exp>;
+  _or?: InputMaybe<Array<Card_Labels_Bool_Exp>>;
+  card?: InputMaybe<Cards_Bool_Exp>;
+  card_id?: InputMaybe<Uuid_Comparison_Exp>;
+  label?: InputMaybe<Labels_Bool_Exp>;
+  label_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "card_labels" */
+export enum Card_Labels_Constraint {
+  /** unique or primary key constraint on columns "label_id", "card_id" */
+  CardLabelsPkey = 'card_labels_pkey'
+}
+
+/** input type for inserting data into table "card_labels" */
+export type Card_Labels_Insert_Input = {
+  card?: InputMaybe<Cards_Obj_Rel_Insert_Input>;
+  card_id?: InputMaybe<Scalars['uuid']['input']>;
+  label?: InputMaybe<Labels_Obj_Rel_Insert_Input>;
+  label_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** aggregate max on columns */
+export type Card_Labels_Max_Fields = {
+  __typename?: 'card_labels_max_fields';
+  card_id?: Maybe<Scalars['uuid']['output']>;
+  label_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by max() on columns of table "card_labels" */
+export type Card_Labels_Max_Order_By = {
+  card_id?: InputMaybe<Order_By>;
+  label_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Card_Labels_Min_Fields = {
+  __typename?: 'card_labels_min_fields';
+  card_id?: Maybe<Scalars['uuid']['output']>;
+  label_id?: Maybe<Scalars['uuid']['output']>;
+};
+
+/** order by min() on columns of table "card_labels" */
+export type Card_Labels_Min_Order_By = {
+  card_id?: InputMaybe<Order_By>;
+  label_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "card_labels" */
+export type Card_Labels_Mutation_Response = {
+  __typename?: 'card_labels_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Card_Labels>;
+};
+
+/** on_conflict condition type for table "card_labels" */
+export type Card_Labels_On_Conflict = {
+  constraint: Card_Labels_Constraint;
+  update_columns?: Array<Card_Labels_Update_Column>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "card_labels". */
+export type Card_Labels_Order_By = {
+  card?: InputMaybe<Cards_Order_By>;
+  card_id?: InputMaybe<Order_By>;
+  label?: InputMaybe<Labels_Order_By>;
+  label_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: card_labels */
+export type Card_Labels_Pk_Columns_Input = {
+  card_id: Scalars['uuid']['input'];
+  label_id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "card_labels" */
+export enum Card_Labels_Select_Column {
+  /** column name */
+  CardId = 'card_id',
+  /** column name */
+  LabelId = 'label_id'
+}
+
+/** input type for updating data in table "card_labels" */
+export type Card_Labels_Set_Input = {
+  card_id?: InputMaybe<Scalars['uuid']['input']>;
+  label_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** Streaming cursor of the table "card_labels" */
+export type Card_Labels_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Card_Labels_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Card_Labels_Stream_Cursor_Value_Input = {
+  card_id?: InputMaybe<Scalars['uuid']['input']>;
+  label_id?: InputMaybe<Scalars['uuid']['input']>;
+};
+
+/** update columns of table "card_labels" */
+export enum Card_Labels_Update_Column {
+  /** column name */
+  CardId = 'card_id',
+  /** column name */
+  LabelId = 'label_id'
+}
+
+export type Card_Labels_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Card_Labels_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Card_Labels_Bool_Exp;
+};
+
 /** columns and relationships of "cards" */
 export type Cards = {
   __typename?: 'cards';
+  /** An array relationship */
+  card_labels: Array<Card_Labels>;
+  /** An aggregate relationship */
+  card_labels_aggregate: Card_Labels_Aggregate;
   /** An object relationship */
   column?: Maybe<Columns>;
   column_id?: Maybe<Scalars['uuid']['output']>;
@@ -2437,6 +2651,26 @@ export type Cards = {
   id: Scalars['uuid']['output'];
   position: Scalars['float8']['output'];
   title: Scalars['String']['output'];
+};
+
+
+/** columns and relationships of "cards" */
+export type CardsCard_LabelsArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
+/** columns and relationships of "cards" */
+export type CardsCard_Labels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
 };
 
 /** aggregated selection of "cards" */
@@ -2592,6 +2826,8 @@ export type Cards_Bool_Exp = {
   _and?: InputMaybe<Array<Cards_Bool_Exp>>;
   _not?: InputMaybe<Cards_Bool_Exp>;
   _or?: InputMaybe<Array<Cards_Bool_Exp>>;
+  card_labels?: InputMaybe<Card_Labels_Bool_Exp>;
+  card_labels_aggregate?: InputMaybe<Card_Labels_Aggregate_Bool_Exp>;
   column?: InputMaybe<Columns_Bool_Exp>;
   column_id?: InputMaybe<Uuid_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -2614,6 +2850,7 @@ export type Cards_Inc_Input = {
 
 /** input type for inserting data into table "cards" */
 export type Cards_Insert_Input = {
+  card_labels?: InputMaybe<Card_Labels_Arr_Rel_Insert_Input>;
   column?: InputMaybe<Columns_Obj_Rel_Insert_Input>;
   column_id?: InputMaybe<Scalars['uuid']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -2674,6 +2911,13 @@ export type Cards_Mutation_Response = {
   returning: Array<Cards>;
 };
 
+/** input type for inserting object relation for remote table "cards" */
+export type Cards_Obj_Rel_Insert_Input = {
+  data: Cards_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Cards_On_Conflict>;
+};
+
 /** on_conflict condition type for table "cards" */
 export type Cards_On_Conflict = {
   constraint: Cards_Constraint;
@@ -2683,6 +2927,7 @@ export type Cards_On_Conflict = {
 
 /** Ordering options when selecting data from "cards". */
 export type Cards_Order_By = {
+  card_labels_aggregate?: InputMaybe<Card_Labels_Aggregate_Order_By>;
   column?: InputMaybe<Columns_Order_By>;
   column_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
@@ -3940,6 +4185,278 @@ export type Jsonb_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['jsonb']['input']>>;
 };
 
+/** columns and relationships of "labels" */
+export type Labels = {
+  __typename?: 'labels';
+  /** An object relationship */
+  board?: Maybe<Boards>;
+  board_id?: Maybe<Scalars['uuid']['output']>;
+  /** An array relationship */
+  card_labels: Array<Card_Labels>;
+  /** An aggregate relationship */
+  card_labels_aggregate: Card_Labels_Aggregate;
+  color: Scalars['String']['output'];
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_by?: Maybe<Scalars['uuid']['output']>;
+  id: Scalars['uuid']['output'];
+  name: Scalars['String']['output'];
+  /** An object relationship */
+  user?: Maybe<Users>;
+};
+
+
+/** columns and relationships of "labels" */
+export type LabelsCard_LabelsArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
+/** columns and relationships of "labels" */
+export type LabelsCard_Labels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+/** aggregated selection of "labels" */
+export type Labels_Aggregate = {
+  __typename?: 'labels_aggregate';
+  aggregate?: Maybe<Labels_Aggregate_Fields>;
+  nodes: Array<Labels>;
+};
+
+export type Labels_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Labels_Aggregate_Bool_Exp_Count>;
+};
+
+export type Labels_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Labels_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Labels_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "labels" */
+export type Labels_Aggregate_Fields = {
+  __typename?: 'labels_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Labels_Max_Fields>;
+  min?: Maybe<Labels_Min_Fields>;
+};
+
+
+/** aggregate fields of "labels" */
+export type Labels_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Labels_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "labels" */
+export type Labels_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Labels_Max_Order_By>;
+  min?: InputMaybe<Labels_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "labels" */
+export type Labels_Arr_Rel_Insert_Input = {
+  data: Array<Labels_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Labels_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "labels". All fields are combined with a logical 'AND'. */
+export type Labels_Bool_Exp = {
+  _and?: InputMaybe<Array<Labels_Bool_Exp>>;
+  _not?: InputMaybe<Labels_Bool_Exp>;
+  _or?: InputMaybe<Array<Labels_Bool_Exp>>;
+  board?: InputMaybe<Boards_Bool_Exp>;
+  board_id?: InputMaybe<Uuid_Comparison_Exp>;
+  card_labels?: InputMaybe<Card_Labels_Bool_Exp>;
+  card_labels_aggregate?: InputMaybe<Card_Labels_Aggregate_Bool_Exp>;
+  color?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  created_by?: InputMaybe<Uuid_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "labels" */
+export enum Labels_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  LabelsPkey = 'labels_pkey'
+}
+
+/** input type for inserting data into table "labels" */
+export type Labels_Insert_Input = {
+  board?: InputMaybe<Boards_Obj_Rel_Insert_Input>;
+  board_id?: InputMaybe<Scalars['uuid']['input']>;
+  card_labels?: InputMaybe<Card_Labels_Arr_Rel_Insert_Input>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_by?: InputMaybe<Scalars['uuid']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Labels_Max_Fields = {
+  __typename?: 'labels_max_fields';
+  board_id?: Maybe<Scalars['uuid']['output']>;
+  color?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_by?: Maybe<Scalars['uuid']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+/** order by max() on columns of table "labels" */
+export type Labels_Max_Order_By = {
+  board_id?: InputMaybe<Order_By>;
+  color?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  created_by?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Labels_Min_Fields = {
+  __typename?: 'labels_min_fields';
+  board_id?: Maybe<Scalars['uuid']['output']>;
+  color?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_by?: Maybe<Scalars['uuid']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+/** order by min() on columns of table "labels" */
+export type Labels_Min_Order_By = {
+  board_id?: InputMaybe<Order_By>;
+  color?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  created_by?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "labels" */
+export type Labels_Mutation_Response = {
+  __typename?: 'labels_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Labels>;
+};
+
+/** input type for inserting object relation for remote table "labels" */
+export type Labels_Obj_Rel_Insert_Input = {
+  data: Labels_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Labels_On_Conflict>;
+};
+
+/** on_conflict condition type for table "labels" */
+export type Labels_On_Conflict = {
+  constraint: Labels_Constraint;
+  update_columns?: Array<Labels_Update_Column>;
+  where?: InputMaybe<Labels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "labels". */
+export type Labels_Order_By = {
+  board?: InputMaybe<Boards_Order_By>;
+  board_id?: InputMaybe<Order_By>;
+  card_labels_aggregate?: InputMaybe<Card_Labels_Aggregate_Order_By>;
+  color?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  created_by?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+};
+
+/** primary key columns input for table: labels */
+export type Labels_Pk_Columns_Input = {
+  id: Scalars['uuid']['input'];
+};
+
+/** select columns of table "labels" */
+export enum Labels_Select_Column {
+  /** column name */
+  BoardId = 'board_id',
+  /** column name */
+  Color = 'color',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  CreatedBy = 'created_by',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "labels" */
+export type Labels_Set_Input = {
+  board_id?: InputMaybe<Scalars['uuid']['input']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_by?: InputMaybe<Scalars['uuid']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Streaming cursor of the table "labels" */
+export type Labels_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Labels_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Labels_Stream_Cursor_Value_Input = {
+  board_id?: InputMaybe<Scalars['uuid']['input']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_by?: InputMaybe<Scalars['uuid']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** update columns of table "labels" */
+export enum Labels_Update_Column {
+  /** column name */
+  BoardId = 'board_id',
+  /** column name */
+  Color = 'color',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  CreatedBy = 'created_by',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name'
+}
+
+export type Labels_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Labels_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Labels_Bool_Exp;
+};
+
 /** mutation root */
 export type Mutation_Root = {
   __typename?: 'mutation_root';
@@ -3995,6 +4512,10 @@ export type Mutation_Root = {
   delete_boards?: Maybe<Boards_Mutation_Response>;
   /** delete single row from the table: "boards" */
   delete_boards_by_pk?: Maybe<Boards>;
+  /** delete data from the table: "card_labels" */
+  delete_card_labels?: Maybe<Card_Labels_Mutation_Response>;
+  /** delete single row from the table: "card_labels" */
+  delete_card_labels_by_pk?: Maybe<Card_Labels>;
   /** delete data from the table: "cards" */
   delete_cards?: Maybe<Cards_Mutation_Response>;
   /** delete single row from the table: "cards" */
@@ -4003,6 +4524,10 @@ export type Mutation_Root = {
   delete_columns?: Maybe<Columns_Mutation_Response>;
   /** delete single row from the table: "columns" */
   delete_columns_by_pk?: Maybe<Columns>;
+  /** delete data from the table: "labels" */
+  delete_labels?: Maybe<Labels_Mutation_Response>;
+  /** delete single row from the table: "labels" */
+  delete_labels_by_pk?: Maybe<Labels>;
   /** insert a single row into the table: "auth.providers" */
   insertAuthProvider?: Maybe<AuthProviders>;
   /** insert a single row into the table: "auth.provider_requests" */
@@ -4055,6 +4580,10 @@ export type Mutation_Root = {
   insert_boards?: Maybe<Boards_Mutation_Response>;
   /** insert a single row into the table: "boards" */
   insert_boards_one?: Maybe<Boards>;
+  /** insert data into the table: "card_labels" */
+  insert_card_labels?: Maybe<Card_Labels_Mutation_Response>;
+  /** insert a single row into the table: "card_labels" */
+  insert_card_labels_one?: Maybe<Card_Labels>;
   /** insert data into the table: "cards" */
   insert_cards?: Maybe<Cards_Mutation_Response>;
   /** insert a single row into the table: "cards" */
@@ -4063,6 +4592,10 @@ export type Mutation_Root = {
   insert_columns?: Maybe<Columns_Mutation_Response>;
   /** insert a single row into the table: "columns" */
   insert_columns_one?: Maybe<Columns>;
+  /** insert data into the table: "labels" */
+  insert_labels?: Maybe<Labels_Mutation_Response>;
+  /** insert a single row into the table: "labels" */
+  insert_labels_one?: Maybe<Labels>;
   /** update single row of the table: "auth.providers" */
   updateAuthProvider?: Maybe<AuthProviders>;
   /** update single row of the table: "auth.provider_requests" */
@@ -4135,6 +4668,12 @@ export type Mutation_Root = {
   update_boards_many?: Maybe<Array<Maybe<Boards_Mutation_Response>>>;
   /** update multiples rows of table: "storage.buckets" */
   update_buckets_many?: Maybe<Array<Maybe<Buckets_Mutation_Response>>>;
+  /** update data of the table: "card_labels" */
+  update_card_labels?: Maybe<Card_Labels_Mutation_Response>;
+  /** update single row of the table: "card_labels" */
+  update_card_labels_by_pk?: Maybe<Card_Labels>;
+  /** update multiples rows of table: "card_labels" */
+  update_card_labels_many?: Maybe<Array<Maybe<Card_Labels_Mutation_Response>>>;
   /** update data of the table: "cards" */
   update_cards?: Maybe<Cards_Mutation_Response>;
   /** update single row of the table: "cards" */
@@ -4149,6 +4688,12 @@ export type Mutation_Root = {
   update_columns_many?: Maybe<Array<Maybe<Columns_Mutation_Response>>>;
   /** update multiples rows of table: "storage.files" */
   update_files_many?: Maybe<Array<Maybe<Files_Mutation_Response>>>;
+  /** update data of the table: "labels" */
+  update_labels?: Maybe<Labels_Mutation_Response>;
+  /** update single row of the table: "labels" */
+  update_labels_by_pk?: Maybe<Labels>;
+  /** update multiples rows of table: "labels" */
+  update_labels_many?: Maybe<Array<Maybe<Labels_Mutation_Response>>>;
   /** update multiples rows of table: "auth.users" */
   update_users_many?: Maybe<Array<Maybe<Users_Mutation_Response>>>;
   /** update multiples rows of table: "storage.virus" */
@@ -4313,6 +4858,19 @@ export type Mutation_RootDelete_Boards_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Card_LabelsArgs = {
+  where: Card_Labels_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Card_Labels_By_PkArgs = {
+  card_id: Scalars['uuid']['input'];
+  label_id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_CardsArgs = {
   where: Cards_Bool_Exp;
 };
@@ -4332,6 +4890,18 @@ export type Mutation_RootDelete_ColumnsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Columns_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_LabelsArgs = {
+  where: Labels_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Labels_By_PkArgs = {
   id: Scalars['uuid']['input'];
 };
 
@@ -4519,6 +5089,20 @@ export type Mutation_RootInsert_Boards_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Card_LabelsArgs = {
+  objects: Array<Card_Labels_Insert_Input>;
+  on_conflict?: InputMaybe<Card_Labels_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Card_Labels_OneArgs = {
+  object: Card_Labels_Insert_Input;
+  on_conflict?: InputMaybe<Card_Labels_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_CardsArgs = {
   objects: Array<Cards_Insert_Input>;
   on_conflict?: InputMaybe<Cards_On_Conflict>;
@@ -4543,6 +5127,20 @@ export type Mutation_RootInsert_ColumnsArgs = {
 export type Mutation_RootInsert_Columns_OneArgs = {
   object: Columns_Insert_Input;
   on_conflict?: InputMaybe<Columns_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_LabelsArgs = {
+  objects: Array<Labels_Insert_Input>;
+  on_conflict?: InputMaybe<Labels_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Labels_OneArgs = {
+  object: Labels_Insert_Input;
+  on_conflict?: InputMaybe<Labels_On_Conflict>;
 };
 
 
@@ -4845,6 +5443,26 @@ export type Mutation_RootUpdate_Buckets_ManyArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Card_LabelsArgs = {
+  _set?: InputMaybe<Card_Labels_Set_Input>;
+  where: Card_Labels_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Card_Labels_By_PkArgs = {
+  _set?: InputMaybe<Card_Labels_Set_Input>;
+  pk_columns: Card_Labels_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Card_Labels_ManyArgs = {
+  updates: Array<Card_Labels_Updates>;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_CardsArgs = {
   _inc?: InputMaybe<Cards_Inc_Input>;
   _set?: InputMaybe<Cards_Set_Input>;
@@ -4891,6 +5509,26 @@ export type Mutation_RootUpdate_Columns_ManyArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Files_ManyArgs = {
   updates: Array<Files_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_LabelsArgs = {
+  _set?: InputMaybe<Labels_Set_Input>;
+  where: Labels_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Labels_By_PkArgs = {
+  _set?: InputMaybe<Labels_Set_Input>;
+  pk_columns: Labels_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Labels_ManyArgs = {
+  updates: Array<Labels_Updates>;
 };
 
 
@@ -4984,6 +5622,12 @@ export type Query_Root = {
   /** fetch aggregated fields from the table: "storage.buckets" */
   bucketsAggregate: Buckets_Aggregate;
   /** An array relationship */
+  card_labels: Array<Card_Labels>;
+  /** An aggregate relationship */
+  card_labels_aggregate: Card_Labels_Aggregate;
+  /** fetch data from the table: "card_labels" using primary key columns */
+  card_labels_by_pk?: Maybe<Card_Labels>;
+  /** An array relationship */
   cards: Array<Cards>;
   /** An aggregate relationship */
   cards_aggregate: Cards_Aggregate;
@@ -5001,6 +5645,12 @@ export type Query_Root = {
   files: Array<Files>;
   /** fetch aggregated fields from the table: "storage.files" */
   filesAggregate: Files_Aggregate;
+  /** An array relationship */
+  labels: Array<Labels>;
+  /** An aggregate relationship */
+  labels_aggregate: Labels_Aggregate;
+  /** fetch data from the table: "labels" using primary key columns */
+  labels_by_pk?: Maybe<Labels>;
   /** fetch data from the table: "auth.users" using primary key columns */
   user?: Maybe<Users>;
   /** fetch data from the table: "auth.users" */
@@ -5246,6 +5896,30 @@ export type Query_RootBucketsAggregateArgs = {
 };
 
 
+export type Query_RootCard_LabelsArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
+export type Query_RootCard_Labels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
+export type Query_RootCard_Labels_By_PkArgs = {
+  card_id: Scalars['uuid']['input'];
+  label_id: Scalars['uuid']['input'];
+};
+
+
 export type Query_RootCardsArgs = {
   distinct_on?: InputMaybe<Array<Cards_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -5312,6 +5986,29 @@ export type Query_RootFilesAggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Files_Order_By>>;
   where?: InputMaybe<Files_Bool_Exp>;
+};
+
+
+export type Query_RootLabelsArgs = {
+  distinct_on?: InputMaybe<Array<Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Labels_Order_By>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
+};
+
+
+export type Query_RootLabels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Labels_Order_By>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
+};
+
+
+export type Query_RootLabels_By_PkArgs = {
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -5443,6 +6140,14 @@ export type Subscription_Root = {
   /** fetch data from the table in a streaming manner: "storage.buckets" */
   buckets_stream: Array<Buckets>;
   /** An array relationship */
+  card_labels: Array<Card_Labels>;
+  /** An aggregate relationship */
+  card_labels_aggregate: Card_Labels_Aggregate;
+  /** fetch data from the table: "card_labels" using primary key columns */
+  card_labels_by_pk?: Maybe<Card_Labels>;
+  /** fetch data from the table in a streaming manner: "card_labels" */
+  card_labels_stream: Array<Card_Labels>;
+  /** An array relationship */
   cards: Array<Cards>;
   /** An aggregate relationship */
   cards_aggregate: Cards_Aggregate;
@@ -5466,6 +6171,14 @@ export type Subscription_Root = {
   filesAggregate: Files_Aggregate;
   /** fetch data from the table in a streaming manner: "storage.files" */
   files_stream: Array<Files>;
+  /** An array relationship */
+  labels: Array<Labels>;
+  /** An aggregate relationship */
+  labels_aggregate: Labels_Aggregate;
+  /** fetch data from the table: "labels" using primary key columns */
+  labels_by_pk?: Maybe<Labels>;
+  /** fetch data from the table in a streaming manner: "labels" */
+  labels_stream: Array<Labels>;
   /** fetch data from the table: "auth.users" using primary key columns */
   user?: Maybe<Users>;
   /** fetch data from the table: "auth.users" */
@@ -5785,6 +6498,37 @@ export type Subscription_RootBuckets_StreamArgs = {
 };
 
 
+export type Subscription_RootCard_LabelsArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
+export type Subscription_RootCard_Labels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Card_Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Card_Labels_Order_By>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
+export type Subscription_RootCard_Labels_By_PkArgs = {
+  card_id: Scalars['uuid']['input'];
+  label_id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootCard_Labels_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Card_Labels_Stream_Cursor_Input>>;
+  where?: InputMaybe<Card_Labels_Bool_Exp>;
+};
+
+
 export type Subscription_RootCardsArgs = {
   distinct_on?: InputMaybe<Array<Cards_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -5872,6 +6616,36 @@ export type Subscription_RootFiles_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Files_Stream_Cursor_Input>>;
   where?: InputMaybe<Files_Bool_Exp>;
+};
+
+
+export type Subscription_RootLabelsArgs = {
+  distinct_on?: InputMaybe<Array<Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Labels_Order_By>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
+};
+
+
+export type Subscription_RootLabels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Labels_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Labels_Order_By>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
+};
+
+
+export type Subscription_RootLabels_By_PkArgs = {
+  id: Scalars['uuid']['input'];
+};
+
+
+export type Subscription_RootLabels_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Labels_Stream_Cursor_Input>>;
+  where?: InputMaybe<Labels_Bool_Exp>;
 };
 
 
@@ -6907,10 +7681,12 @@ export type CreateCardMutationVariables = Exact<{
 
 export type CreateCardMutation = { __typename?: 'mutation_root', insert_cards_one?: { __typename?: 'cards', id: any, title: string, position: any, description?: string | null } | null };
 
-export type GetBoardsForUserSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type GetBoardsForUserSubscriptionVariables = Exact<{
+  userId: Scalars['uuid']['input'];
+}>;
 
 
-export type GetBoardsForUserSubscription = { __typename?: 'subscription_root', boards: Array<{ __typename?: 'boards', id: any, name: string, created_at?: any | null, columns: Array<{ __typename?: 'columns', id: any, name: string, position: any, cards: Array<{ __typename?: 'cards', id: any, title: string, description?: string | null, position: any }> }> }> };
+export type GetBoardsForUserSubscription = { __typename?: 'subscription_root', boards: Array<{ __typename?: 'boards', id: any, name: string, columns: Array<{ __typename?: 'columns', id: any, name: string, position: any, cards: Array<{ __typename?: 'cards', id: any, title: string, description?: string | null, position: any, card_labels: Array<{ __typename?: 'card_labels', card_id: any, label: { __typename?: 'labels', id: any, name: string, color: string } }> }> }>, labels: Array<{ __typename?: 'labels', id: any, name: string, color: string }> }> };
 
 export type UpdateBoardMutationVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -6974,11 +7750,50 @@ export type DeleteColumnMutationVariables = Exact<{
 
 export type DeleteColumnMutation = { __typename?: 'mutation_root', delete_columns_by_pk?: { __typename?: 'columns', id: any } | null };
 
+export type CreateLabelMutationVariables = Exact<{
+  board_id: Scalars['uuid']['input'];
+  name: Scalars['String']['input'];
+  color: Scalars['String']['input'];
+}>;
+
+
+export type CreateLabelMutation = { __typename?: 'mutation_root', insert_labels_one?: { __typename?: 'labels', id: any, name: string, color: string } | null };
+
+export type AssignLabelToCardMutationVariables = Exact<{
+  card_id: Scalars['uuid']['input'];
+  label_id: Scalars['uuid']['input'];
+}>;
+
+
+export type AssignLabelToCardMutation = { __typename?: 'mutation_root', insert_card_labels_one?: { __typename?: 'card_labels', card_id: any, label_id: any } | null };
+
+export type RemoveLabelFromCardMutationVariables = Exact<{
+  card_id: Scalars['uuid']['input'];
+  label_id: Scalars['uuid']['input'];
+}>;
+
+
+export type RemoveLabelFromCardMutation = { __typename?: 'mutation_root', delete_card_labels?: { __typename?: 'card_labels_mutation_response', affected_rows: number } | null };
+
+export type DeleteLabelMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeleteLabelMutation = { __typename?: 'mutation_root', delete_labels_by_pk?: { __typename?: 'labels', id: any } | null };
+
+export type DeleteCardLabelsByLabelIdMutationVariables = Exact<{
+  label_id: Scalars['uuid']['input'];
+}>;
+
+
+export type DeleteCardLabelsByLabelIdMutation = { __typename?: 'mutation_root', delete_card_labels?: { __typename?: 'card_labels_mutation_response', affected_rows: number } | null };
+
 
 export const CreateBoardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateBoard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owner_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_boards_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"owner_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owner_id"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<CreateBoardMutation, CreateBoardMutationVariables>;
 export const CreateColumnDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateColumn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"board_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"position"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"float8"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_columns_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"board_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"board_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"Variable","name":{"kind":"Name","value":"position"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}}]}}]}}]} as unknown as DocumentNode<CreateColumnMutation, CreateColumnMutationVariables>;
 export const CreateCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"column_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"position"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"float8"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_cards_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"column_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"column_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"Variable","name":{"kind":"Name","value":"position"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<CreateCardMutation, CreateCardMutationVariables>;
-export const GetBoardsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"GetBoardsForUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"boards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"columns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"cards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"position"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetBoardsForUserSubscription, GetBoardsForUserSubscriptionVariables>;
+export const GetBoardsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"GetBoardsForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"boards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"columns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"cards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"card_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"card_id"}},{"kind":"Field","name":{"kind":"Name","value":"label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}}]}}]} as unknown as DocumentNode<GetBoardsForUserSubscription, GetBoardsForUserSubscriptionVariables>;
 export const UpdateBoardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateBoard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"patch"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"boards_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_boards_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"patch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UpdateBoardMutation, UpdateBoardMutationVariables>;
 export const UpdateCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"patch"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cards_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cards_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"patch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"column_id"}}]}}]}}]} as unknown as DocumentNode<UpdateCardMutation, UpdateCardMutationVariables>;
 export const UpdateColumnDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateColumn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"patch"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"columns_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_columns_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"patch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UpdateColumnMutation, UpdateColumnMutationVariables>;
@@ -6987,3 +7802,8 @@ export const UpdateCardPositionDocument = {"kind":"Document","definitions":[{"ki
 export const DeleteCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_cards_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteCardMutation, DeleteCardMutationVariables>;
 export const DeleteBoardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteBoard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"board_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_boards_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"board_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteBoardMutation, DeleteBoardMutationVariables>;
 export const DeleteColumnDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteColumn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_columns_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteColumnMutation, DeleteColumnMutationVariables>;
+export const CreateLabelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateLabel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"board_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"color"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_labels_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"board_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"board_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"color"},"value":{"kind":"Variable","name":{"kind":"Name","value":"color"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}}]} as unknown as DocumentNode<CreateLabelMutation, CreateLabelMutationVariables>;
+export const AssignLabelToCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignLabelToCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"card_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"label_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_card_labels_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"card_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"card_id"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"label_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"label_id"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"card_id"}},{"kind":"Field","name":{"kind":"Name","value":"label_id"}}]}}]}}]} as unknown as DocumentNode<AssignLabelToCardMutation, AssignLabelToCardMutationVariables>;
+export const RemoveLabelFromCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveLabelFromCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"card_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"label_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_card_labels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"card_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"card_id"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"label_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"label_id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveLabelFromCardMutation, RemoveLabelFromCardMutationVariables>;
+export const DeleteLabelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteLabel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_labels_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteLabelMutation, DeleteLabelMutationVariables>;
+export const DeleteCardLabelsByLabelIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteCardLabelsByLabelId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"label_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_card_labels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"label_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"label_id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteCardLabelsByLabelIdMutation, DeleteCardLabelsByLabelIdMutationVariables>;
