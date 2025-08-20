@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { CreateLabelDocument, AssignLabelToCardDocument, RemoveLabelFromCardDocument, DeleteLabelDocument, DeleteCardLabelsByLabelIdDocument } from "@/gql/graphql";
+import {
+  CreateLabelDocument,
+  AssignLabelToCardDocument,
+  RemoveLabelFromCardDocument,
+  DeleteLabelDocument,
+  DeleteCardLabelsByLabelIdDocument,
+} from "@/gql/graphql";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from "lucide-react";
@@ -29,7 +35,17 @@ interface LabelPickerProps {
   allBoardLabels: { id: string; name: string; color: string }[];
 }
 
-export default function LabelPicker({ boardId, columnId, cardId, assignedLabels, onCreateLabelOptimistic, onAssignLabelOptimistic, onRemoveLabelOptimistic, onDeleteLabelOptimistic, allBoardLabels }: LabelPickerProps) {
+export default function LabelPicker({
+  boardId,
+  columnId,
+  cardId,
+  assignedLabels,
+  onCreateLabelOptimistic,
+  onAssignLabelOptimistic,
+  onRemoveLabelOptimistic,
+  onDeleteLabelOptimistic,
+  allBoardLabels,
+}: LabelPickerProps) {
   const [newLabelName, setNewLabelName] = useState("");
   const [newLabelColor, setNewLabelColor] = useState("#3b82f6");
 
@@ -129,10 +145,22 @@ export default function LabelPicker({ boardId, columnId, cardId, assignedLabels,
               const assigned = isLabelAssigned(label.id);
               return (
                 <div key={"button" + index + label.id} className="relative group">
-                  <button onClick={() => handleToggleLabel(label.id)} className="px-2 py-1 hover:cursor-pointer rounded-full text-xs font-medium" style={{ backgroundColor: assigned ? label.color : "transparent", color: assigned ? "white" : label.color, border: `1px solid ${label.color}` }}>
+                  <button
+                    onClick={() => handleToggleLabel(label.id)}
+                    className="px-2 py-1 hover:cursor-pointer rounded-full text-xs font-medium"
+                    style={{
+                      backgroundColor: assigned ? label.color : "transparent",
+                      color: assigned ? "white" : label.color,
+                      border: `1px solid ${label.color}`,
+                    }}
+                  >
                     {label.name}
                   </button>
-                  <button onClick={() => handleDeleteLabel(label.id)} className="absolute top-0 hover:cursor-pointer right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity" title="Delete Label">
+                  <button
+                    onClick={() => handleDeleteLabel(label.id)}
+                    className="absolute top-0 hover:cursor-pointer right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Delete Label"
+                  >
                     <Trash2 className="h-3 w-3" />
                   </button>
                 </div>

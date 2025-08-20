@@ -6,7 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@apollo/client";
 import { Pencil, Trash2, Plus, Check } from "lucide-react";
-import { CreateColumnDocument, DeleteBoardDocument, UpdateBoardDocument, UpdateColumnDocument, UpdateCardDocument, CreateCardDocument, DeleteCardDocument, DeleteColumnDocument } from "@/gql/graphql";
+import {
+  CreateColumnDocument,
+  DeleteBoardDocument,
+  UpdateBoardDocument,
+  UpdateColumnDocument,
+  UpdateCardDocument,
+  CreateCardDocument,
+  DeleteCardDocument,
+  DeleteColumnDocument,
+} from "@/gql/graphql";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useBoard } from "./BoardContext";
 
@@ -218,7 +227,9 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       console.error("Error creating card:", error);
       // Revert the optimistic update on failure
       setBoard(prevBoard => {
-        const updatedColumns = prevBoard.columns.map(col => (col.id === columnId ? { ...col, cards: col.cards.filter(card => card.id !== tempId) } : col));
+        const updatedColumns = prevBoard.columns.map(col =>
+          col.id === columnId ? { ...col, cards: col.cards.filter(card => card.id !== tempId) } : col
+        );
         return { ...prevBoard, columns: updatedColumns };
       });
     }
@@ -227,7 +238,9 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   const handleDeleteCard = async (cardId: string, columnId: string) => {
     // Optimistic UI update: remove card from local state immediately
     setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.map(col => (col.id === columnId ? { ...col, cards: col.cards.filter(card => card.id !== cardId) } : col));
+      const updatedColumns = prevBoard.columns.map(col =>
+        col.id === columnId ? { ...col, cards: col.cards.filter(card => card.id !== cardId) } : col
+      );
       return { ...prevBoard, columns: updatedColumns };
     });
 
@@ -466,7 +479,11 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       <div className="flex items-center justify-between mb-4">
         {isEditing ? (
           <div className="flex w-full gap-2 items-center">
-            <Input value={editedName} onChange={e => setEditedName(e.target.value)} onKeyDown={e => e.key === "Enter" && handleUpdateBoard()} />
+            <Input
+              value={editedName}
+              onChange={e => setEditedName(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleUpdateBoard()}
+            />
             <Button onClick={handleUpdateBoard}>Save</Button>
             <Button variant="ghost" onClick={() => setIsEditing(false)}>
               Cancel
@@ -496,7 +513,21 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
                   {provided => (
                     <div ref={provided.innerRef} {...provided.draggableProps} className="min-w-[280px] mx-2">
                       {/* IMPORTANT: use margin not gap here bc gap causes UI issues when used on the above div's parent */}
-                      <ColumnView column={col} dragHandleProps={provided.dragHandleProps} onAddCard={handleCreateCard} onDeleteCard={handleDeleteCard} onDeleteColumn={handleDeleteColumn} onUpdateColumn={handleUpdateColumn} onUpdateCard={handleUpdateCard} boardId={board.id} handleCreateLabelOptimistic={handleCreateLabelOptimistic} handleAssignLabelOptimistic={handleAssignLabelOptimistic} handleRemoveLabelOptimistic={handleRemoveLabelOptimistic} handleDeleteLabelOptimistic={handleDeleteLabelOptimistic} allBoardLabels={board.labels} />
+                      <ColumnView
+                        column={col}
+                        dragHandleProps={provided.dragHandleProps}
+                        onAddCard={handleCreateCard}
+                        onDeleteCard={handleDeleteCard}
+                        onDeleteColumn={handleDeleteColumn}
+                        onUpdateColumn={handleUpdateColumn}
+                        onUpdateCard={handleUpdateCard}
+                        boardId={board.id}
+                        handleCreateLabelOptimistic={handleCreateLabelOptimistic}
+                        handleAssignLabelOptimistic={handleAssignLabelOptimistic}
+                        handleRemoveLabelOptimistic={handleRemoveLabelOptimistic}
+                        handleDeleteLabelOptimistic={handleDeleteLabelOptimistic}
+                        allBoardLabels={board.labels}
+                      />
                     </div>
                   )}
                 </Draggable>
@@ -505,7 +536,11 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
               <div className="min-w-[280px] px-3">
                 <div className="flex flex-col gap-2 bg-white">
                   {!showInput ? (
-                    <Button variant="ghost" className="w-full justify-start bg-gray-100 hover:cursor-pointer text-gray-500 hover:text-blue-500" onClick={() => setShowInput(true)}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start bg-gray-100 hover:cursor-pointer text-gray-500 hover:text-blue-500"
+                      onClick={() => setShowInput(true)}
+                    >
                       <Plus className="h-4 w-4 mr-2" /> Add a column
                     </Button>
                   ) : (

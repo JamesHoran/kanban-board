@@ -41,7 +41,21 @@ interface ColumnViewProps {
   allBoardLabels: { id: string; name: string; color: string }[];
 }
 
-export default function ColumnView({ column, dragHandleProps, onAddCard, onDeleteCard, onDeleteColumn, onUpdateColumn, onUpdateCard, boardId, handleCreateLabelOptimistic, handleAssignLabelOptimistic, handleRemoveLabelOptimistic, handleDeleteLabelOptimistic, allBoardLabels }: ColumnViewProps) {
+export default function ColumnView({
+  column,
+  dragHandleProps,
+  onAddCard,
+  onDeleteCard,
+  onDeleteColumn,
+  onUpdateColumn,
+  onUpdateCard,
+  boardId,
+  handleCreateLabelOptimistic,
+  handleAssignLabelOptimistic,
+  handleRemoveLabelOptimistic,
+  handleDeleteLabelOptimistic,
+  allBoardLabels,
+}: ColumnViewProps) {
   const [title, setTitle] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(column.name);
@@ -118,7 +132,11 @@ export default function ColumnView({ column, dragHandleProps, onAddCard, onDelet
       <div {...dragHandleProps} className="flex items-center justify-between mb-3">
         {isEditing ? (
           <div className="flex w-full gap-2 items-center">
-            <Input value={editedName} onChange={e => setEditedName(e.target.value)} onKeyDown={e => e.key === "Enter" && handleUpdateColumn()} />
+            <Input
+              value={editedName}
+              onChange={e => setEditedName(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleUpdateColumn()}
+            />
             <Button onClick={handleUpdateColumn}>Save</Button>
             <Button variant="ghost" onClick={() => setIsEditing(false)}>
               Cancel
@@ -145,8 +163,25 @@ export default function ColumnView({ column, dragHandleProps, onAddCard, onDelet
             {column.cards.map((card, index) => (
               <Draggable key={card.id} draggableId={card.id} index={index}>
                 {provided => (
-                  <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={provided.draggableProps.style} className="my-1">
-                    <CardView card={card} column={column} onDeleteCard={() => onDeleteCard(card.id, column.id)} onUpdateCard={onUpdateCard} boardId={boardId} handleCreateLabelOptimistic={handleCreateLabelOptimistic} handleAssignLabelOptimistic={handleAssignLabelOptimistic} handleRemoveLabelOptimistic={handleRemoveLabelOptimistic} handleDeleteLabelOptimistic={handleDeleteLabelOptimistic} allBoardLabels={allBoardLabels} />
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    style={provided.draggableProps.style}
+                    className="my-1"
+                  >
+                    <CardView
+                      card={card}
+                      column={column}
+                      onDeleteCard={() => onDeleteCard(card.id, column.id)}
+                      onUpdateCard={onUpdateCard}
+                      boardId={boardId}
+                      handleCreateLabelOptimistic={handleCreateLabelOptimistic}
+                      handleAssignLabelOptimistic={handleAssignLabelOptimistic}
+                      handleRemoveLabelOptimistic={handleRemoveLabelOptimistic}
+                      handleDeleteLabelOptimistic={handleDeleteLabelOptimistic}
+                      allBoardLabels={allBoardLabels}
+                    />
                   </div>
                 )}
               </Draggable>

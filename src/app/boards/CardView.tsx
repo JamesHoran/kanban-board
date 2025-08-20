@@ -42,7 +42,18 @@ interface CardViewProps {
   allBoardLabels: { id: string; name: string; color: string }[];
 }
 
-export default function CardView({ card, column, onDeleteCard, onUpdateCard, boardId, handleCreateLabelOptimistic, handleAssignLabelOptimistic, handleRemoveLabelOptimistic, handleDeleteLabelOptimistic, allBoardLabels }: CardViewProps) {
+export default function CardView({
+  card,
+  column,
+  onDeleteCard,
+  onUpdateCard,
+  boardId,
+  handleCreateLabelOptimistic,
+  handleAssignLabelOptimistic,
+  handleRemoveLabelOptimistic,
+  handleDeleteLabelOptimistic,
+  allBoardLabels,
+}: CardViewProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onCardDragStart = (e: React.DragEvent) => {
@@ -59,7 +70,11 @@ export default function CardView({ card, column, onDeleteCard, onUpdateCard, boa
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap gap-1">
             {card.card_labels?.map((label: CardLabel, index: any) => (
-              <span key={"card" + index + label.label.id} className="px-2 py-0.5 rounded-full text-white text-xs font-semibold" style={{ backgroundColor: label.label.color }}>
+              <span
+                key={"card" + index + label.label.id}
+                className="px-2 py-0.5 rounded-full text-white text-xs font-semibold"
+                style={{ backgroundColor: label.label.color }}
+              >
                 {label.label.name}
               </span>
             ))}
@@ -71,7 +86,20 @@ export default function CardView({ card, column, onDeleteCard, onUpdateCard, boa
           </div>
         </div>
       </div>
-      {isModalOpen && <CardDetailsModal column={column} card={card} onClose={() => setIsModalOpen(false)} onUpdateCard={onUpdateCard} boardId={boardId} handleCreateLabelOptimistic={handleCreateLabelOptimistic} handleAssignLabelOptimistic={handleAssignLabelOptimistic} handleRemoveLabelOptimistic={handleRemoveLabelOptimistic} handleDeleteLabelOptimistic={handleDeleteLabelOptimistic} allBoardLabels={allBoardLabels} />}
+      {isModalOpen && (
+        <CardDetailsModal
+          column={column}
+          card={card}
+          onClose={() => setIsModalOpen(false)}
+          onUpdateCard={onUpdateCard}
+          boardId={boardId}
+          handleCreateLabelOptimistic={handleCreateLabelOptimistic}
+          handleAssignLabelOptimistic={handleAssignLabelOptimistic}
+          handleRemoveLabelOptimistic={handleRemoveLabelOptimistic}
+          handleDeleteLabelOptimistic={handleDeleteLabelOptimistic}
+          allBoardLabels={allBoardLabels}
+        />
+      )}
     </>
   );
 }

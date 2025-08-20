@@ -169,8 +169,16 @@ export default function BoardsPage() {
           )}
         </div>
         <div className="flex gap-2">
-          <Input value={name} onChange={e => setName(e.target.value)} placeholder="New board name" className="max-w-xs border-gray-300 rounded-lg focus:ring-blue-500" />
-          <Button onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg flex items-center gap-1.5 transition-colors">
+          <Input
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="New board name"
+            className="max-w-xs border-gray-300 rounded-lg focus:ring-blue-500"
+          />
+          <Button
+            onClick={handleCreate}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
+          >
             <Plus className="h-4 w-4" />
             Create
           </Button>
