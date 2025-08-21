@@ -100,12 +100,7 @@ export default function CardDetailsModal({
             </div>
             <div>
               <label className="text-sm font-medium">Description</label>
-              <Textarea
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                className="mt-1 min-h-[100px]"
-                placeholder="Use **bold**, _italic_, or - list items"
-              />
+              <Textarea value={description} onChange={e => setDescription(e.target.value)} className="mt-1 min-h-[200px]" />
             </div>
             <Button onClick={handleSave}>Save changes</Button>
           </div>

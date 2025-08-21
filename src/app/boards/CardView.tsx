@@ -62,11 +62,34 @@ export default function CardView({
     e.dataTransfer.effectAllowed = "move";
   };
 
+  const descriptionCharacterLimit = 500;
+  const TitleCharacterLimit = 33;
+
   return (
     <>
       <div draggable onDragStart={onCardDragStart} className="p-2 bg-white rounded shadow cursor-move" onClick={() => setIsModalOpen(true)}>
-        <div className="font-medium">{card.title}</div>
-        {card.description && <div className="text-sm text-gray-500 line-clamp-2 pb-2">{card.description}</div>}
+        <div className="font-medium">
+          {((card: Card) => {
+            const truncatedText = card.title
+              ? card.title.length > TitleCharacterLimit
+                ? `${card.title.substring(0, TitleCharacterLimit)}...`
+                : card.title
+              : "";
+            return truncatedText;
+          })(card)}
+        </div>
+        {card.description && (
+          <p className="text-sm text-gray-500 line-clamp-5 mb-2 whitespace-pre-line">
+            {((card: Card) => {
+              const truncatedText = card.description
+                ? card.description.length > descriptionCharacterLimit
+                  ? `${card.description.substring(0, descriptionCharacterLimit)}...`
+                  : card.description
+                : "";
+              return truncatedText;
+            })(card)}
+          </p>
+        )}
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap gap-1">
             {card.card_labels?.map((label: CardLabel, index: any) => (
