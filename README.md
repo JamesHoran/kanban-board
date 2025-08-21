@@ -62,14 +62,8 @@ kanban-board/.env:
 
 # to do
 
-## sinc the local db wi the cloud db
-
 ## test everything in a new git repo using the cloud
 
 ## set up project to be hosted on verecel or whatever that is
 
-# Helpful commands
-
-## apply local migrations to the remote server using
-
-`nhost hasura-migrations apply --remote`
+## fix loading screen on boards load

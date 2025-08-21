@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { nhost } from "@/lib/nhost";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();

@@ -11,48 +11,23 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { useUserData } from "@nhost/nextjs";
 import { BoardProvider } from "./BoardContext";
-
-// Import the generated GraphQL document nodes
+import { Board } from "./types";
 import { GetBoardsForUserDocument, CreateBoardDocument, DeleteBoardDocument } from "@/gql/graphql";
 
-interface Card {
-  id: string;
-  position: number;
-  title: string;
-  description?: string | null;
-  card_labels: any;
-}
-
-interface Column {
-  id: string;
-  position: number;
-  name: string;
-  cards: Card[];
-}
-
-interface Board {
-  id: string;
-  name: string;
-  columns: Column[];
-  labels: { id: string; name: string; color: string }[];
-}
-
 export default function BoardsPage() {
-  // Use the imported document with useSubscription
   const userData = useUserData();
-
   const { data, loading, error } = useSubscription(GetBoardsForUserDocument, {
     skip: !userData,
     variables: { userId: userData?.id }, // Use optional chaining to prevent an error
   });
 
-  // Use the imported document with useMutation
   const [createBoard] = useMutation(CreateBoardDocument);
   const [deleteBoard] = useMutation(DeleteBoardDocument);
 
   const [name, setName] = useState("");
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
   const [localBoards, setLocalBoards] = useState<Board[]>([]);
+
   const selectedBoard = localBoards.find(board => board.id === selectedBoardId);
 
   useEffect(() => {

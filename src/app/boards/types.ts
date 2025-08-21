@@ -1,9 +1,20 @@
+export interface Label {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface CardLabel {
+  card_id: string;
+  label: Label;
+}
+
 export interface Card {
   id: string;
   position: number;
   title: string;
   description?: string | null;
-  card_labels: any;
+  card_labels: CardLabel[];
 }
 
 export interface Column {
@@ -17,5 +28,5 @@ export interface Board {
   id: string;
   name: string;
   columns: Column[];
-  labels: { id: string; name: string; color: string }[];
+  labels: Label[];
 }

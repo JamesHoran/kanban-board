@@ -68,33 +68,17 @@ export const cache = new InMemoryCache({
             return incoming;
           },
         },
-        // cards: {
-        //   merge(existing: any[] = [], incoming: any[], { readField }) {
-        //     const merged = [...existing];
-
-        //     incoming.forEach(card => {
-        //       const id = readField("id", card);
-        //       const index = merged.findIndex(c => readField("id", c) === id);
-
-        //       if (index > -1) {
-        //         // Update existing card
-        //         merged[index] = card;
-        //       } else {
-        //         // Add new card
-        //         merged.push(card);
-        //       }
-        //     });
-
-        //     return merged;
-        //   },
-        // },
       },
     },
     boards: {
       keyFields: ["id"],
       fields: {
         labels: {
-          merge(existing: any[] = [], incoming: any[], { readField }) {
+          merge(
+            existing: { id: string; name: string; color: string }[] = [],
+            incoming: { id: string; name: string; color: string }[],
+            { readField }
+          ) {
             const merged = [...existing];
 
             incoming.forEach(label => {
@@ -118,7 +102,23 @@ export const cache = new InMemoryCache({
       keyFields: ["id"],
       fields: {
         cards: {
-          merge(existing: any[] = [], incoming: any[], { readField }) {
+          merge(
+            existing: {
+              id: string;
+              position: number;
+              title: string;
+              description?: string | null;
+              card_labels: { card_id: string; label: { id: string; name: string; color: string } };
+            }[] = [],
+            incoming: {
+              id: string;
+              position: number;
+              title: string;
+              description?: string | null;
+              card_labels: { card_id: string; label: { id: string; name: string; color: string } };
+            }[],
+            { readField }
+          ) {
             const merged = [...existing];
 
             incoming.forEach(card => {

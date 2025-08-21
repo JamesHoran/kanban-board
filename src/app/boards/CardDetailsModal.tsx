@@ -6,21 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import LabelPicker from "./LabelPicker";
-
-interface Card {
-  id: string;
-  position: number;
-  title: string;
-  description?: string | null;
-  card_labels: any;
-}
-
-interface Column {
-  id: string;
-  position: number;
-  name: string;
-  cards: Card[];
-}
+import { Card, Column, Label } from "./types"; // Import Card and Column from types.ts
 
 interface CardDetailsModalProps {
   card: Card;
@@ -28,11 +14,11 @@ interface CardDetailsModalProps {
   onClose: () => void;
   onUpdateCard: (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => void;
   boardId: string;
-  handleCreateLabelOptimistic: any;
-  handleAssignLabelOptimistic: any;
-  handleRemoveLabelOptimistic: any;
-  handleDeleteLabelOptimistic: any;
-  allBoardLabels: { id: string; name: string; color: string }[];
+  handleCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
+  handleAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
+  handleRemoveLabelOptimistic: (cardId: string, labelId: string) => void;
+  handleDeleteLabelOptimistic: (labelId: string) => void;
+  allBoardLabels: Label[];
 }
 
 export default function CardDetailsModal({
@@ -56,8 +42,8 @@ export default function CardDetailsModal({
     setDescription(card.description || "");
   }, [card]);
 
-  const handleSave = async () => {
-    onUpdateCard(card.id, column.id, { title: title, description: description });
+  const handleSave = () => {
+    onUpdateCard(card.id, column.id, { title, description });
     onClose();
   };
 
