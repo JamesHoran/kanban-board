@@ -66,6 +66,10 @@ kanban-board/.env:
 
 ## test everything in a new git repo using the cloud
 
-## lint
-
 ## set up project to be hosted on verecel or whatever that is
+
+# Helpful commands
+
+## apply local migrations to the remote server using
+
+`nhost hasura-migrations apply --remote`
