@@ -14,7 +14,11 @@ export default function Home() {
   if (!mounted) return null; // don’t render until client
 
   if (isLoading) {
-    return <p className="text-gray-500">Checking your session...</p>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   return (

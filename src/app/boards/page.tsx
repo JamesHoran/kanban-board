@@ -53,7 +53,11 @@ export default function BoardsPage() {
   }, [data, selectedBoardId]);
 
   if (!userData) {
-    return <div>Loading user data...</div>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p>Loading User Data...</p>
+      </div>
+    );
   }
 
   const handleCreate = async () => {
@@ -121,7 +125,12 @@ export default function BoardsPage() {
     }
   };
 
-  if (loading) return <p>Loading boards...</p>;
+  if (loading)
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p>Loading boards...</p>
+      </div>
+    );
   if (error) return <p>Error: {error.message}</p>;
 
   return (
