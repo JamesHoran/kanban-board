@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useNhostClient } from "@nhost/nextjs";
 import { useEffect } from "react";
 
-export default function logOutPage() {
+export default function LogOutPage() {
   const nhost = useNhostClient();
   const router = useRouter();
 

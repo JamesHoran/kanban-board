@@ -8,7 +8,6 @@ import { useMutation } from "@apollo/client";
 import { Pencil, Trash2, Plus, Check } from "lucide-react";
 import {
   CreateColumnDocument,
-  DeleteBoardDocument,
   UpdateBoardDocument,
   UpdateColumnDocument,
   UpdateCardDocument,
@@ -18,21 +17,7 @@ import {
 } from "@/gql/graphql";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useBoard } from "./BoardContext";
-
-interface Card {
-  id: string;
-  position: number;
-  title: string;
-  description?: string | null;
-  card_labels: any;
-}
-
-interface Column {
-  id: string;
-  position: number;
-  name: string;
-  cards: Card[];
-}
+import { Board, Card } from "./types";
 
 interface BoardViewProps {
   handleDeleteLocalBoard: () => void;
@@ -40,21 +25,11 @@ interface BoardViewProps {
 
 export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   const { board, setBoard, handleUpdateColumnId } = useBoard();
-  if (!board) {
-    return null; // or a loading spinner
-  }
 
   const [name, setName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(board.name);
   const [showInput, setShowInput] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (showInput && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [showInput]);
 
   const [createColumn] = useMutation(CreateColumnDocument);
   const [updateBoard] = useMutation(UpdateBoardDocument);
@@ -64,28 +39,17 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   const [createCard] = useMutation(CreateCardDocument);
   const [deleteCard] = useMutation(DeleteCardDocument);
 
-  const handleAddColumn = async () => {
-    if (!name.trim()) return;
-    const last = board.columns[board.columns.length - 1];
-    const newPos = last ? last.position + 1000 : 1000;
+  const inputRef = useRef<HTMLInputElement>(null);
 
-    await createColumn({
-      variables: { board_id: board.id, name, position: newPos },
-    }).then(response => {
-      // Check if the mutation was successful and data was returned
-      if (response?.data?.insert_columns_one) {
-        const newColumnData = response.data.insert_columns_one;
-        const newColumn: Column = { ...newColumnData, cards: [] };
-        // Update the local state with the new column
-        setBoard(prevBoard => ({
-          ...prevBoard,
-          columns: [...prevBoard.columns, newColumn],
-        }));
-      }
-    });
+  useEffect(() => {
+    if (showInput && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showInput]);
 
-    setName("");
-  };
+  if (!board) {
+    return null; // or a loading spinner
+  }
 
   const handleUpdateBoard = async () => {
     if (editedName.trim() === board.name) {
@@ -152,7 +116,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       const sourceColumn = updatedBoard.columns.find(c => c.id === startCol.id)!;
       const destinationColumn = updatedBoard.columns.find(c => c.id === endCol.id)!;
 
-      let movedCard = sourceColumn.cards[source.index];
+      const movedCard = sourceColumn.cards[source.index];
 
       sourceColumn.cards.splice(source.index, 1);
       destinationColumn.cards.splice(destination.index, 0, movedCard);
@@ -195,7 +159,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       position: newPos,
       title,
       description: null, // Ensure description is included
-      card_labels: null,
+      card_labels: [],
     };
 
     setBoard(prevBoard => {
@@ -408,12 +372,13 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
   // Function to handle optimistic assignment of a label to a card
   const handleAssignLabelOptimistic = (cardId: string, labelId: string, labelName: string, labelColor: string) => {
-    setBoard(prevBoard => {
+    setBoard((prevBoard: Board) => {
       const updatedColumns = prevBoard.columns.map(column => ({
         ...column,
         cards: column.cards.map(card => {
           if (card.id === cardId) {
             const newAssignedLabel = {
+              card_id: card.id,
               label: {
                 id: labelId,
                 name: labelName,
@@ -440,7 +405,10 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
           if (card.id === cardId) {
             return {
               ...card,
-              card_labels: card.card_labels?.filter((assignedLabel: any) => assignedLabel.label.id !== labelId) ?? [],
+              card_labels:
+                card.card_labels?.filter(
+                  (assignedLabel: { label: { id: string; name: string; color: string } }) => assignedLabel.label.id !== labelId
+                ) ?? [],
             };
           }
           return card;
@@ -460,8 +428,10 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
         ...column,
         cards: column.cards.map(card => ({
           ...card,
-          // Correctly check assignedLabel.label.id to match the data structure
-          card_labels: card.card_labels?.filter((assignedLabel: any) => assignedLabel.label.id !== labelId) ?? [],
+          card_labels:
+            card.card_labels?.filter(
+              (assignedLabel: { label: { id: string; name: string; color: string } }) => assignedLabel.label.id !== labelId
+            ) ?? [],
         })),
       }));
 

@@ -27,7 +27,7 @@ export function BoardProvider({ initialBoard, children }: { initialBoard: Board;
         cards: column.cards.map(card => ({
           ...card,
           card_labels:
-            card.card_labels?.map((assignedLabel: any) =>
+            card.card_labels?.map((assignedLabel: { card_id: string; label: { id: string; name: string; color: string } }) =>
               assignedLabel.label.id === tempId ? { ...assignedLabel, label: { ...assignedLabel.label, id: realId } } : assignedLabel
             ) ?? [],
         })),

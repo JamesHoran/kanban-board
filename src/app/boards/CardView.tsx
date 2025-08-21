@@ -4,30 +4,7 @@ import { useState } from "react";
 import CardDetailsModal from "./CardDetailsModal";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface CardLabel {
-  card_id: string;
-  label: {
-    id: string;
-    name: string;
-    color: string;
-  };
-}
-
-interface Card {
-  id: string;
-  position: number;
-  title: string;
-  description?: string | null;
-  card_labels: CardLabel[];
-}
-
-interface Column {
-  id: string;
-  position: number;
-  name: string;
-  cards: Card[];
-}
+import { Card, Column, CardLabel, Label } from "./types";
 
 interface CardViewProps {
   card: Card;
@@ -35,11 +12,11 @@ interface CardViewProps {
   onDeleteCard: () => void;
   onUpdateCard: (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => void;
   boardId: string;
-  handleCreateLabelOptimistic: any;
-  handleAssignLabelOptimistic: any;
-  handleRemoveLabelOptimistic: any;
-  handleDeleteLabelOptimistic: any;
-  allBoardLabels: { id: string; name: string; color: string }[];
+  handleCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
+  handleAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
+  handleRemoveLabelOptimistic: (cardId: string, labelId: string) => void;
+  handleDeleteLabelOptimistic: (labelId: string) => void;
+  allBoardLabels: Label[];
 }
 
 export default function CardView({
@@ -62,16 +39,39 @@ export default function CardView({
     e.dataTransfer.effectAllowed = "move";
   };
 
+  const descriptionCharacterLimit = 500;
+  const TitleCharacterLimit = 33;
+
   return (
     <>
       <div draggable onDragStart={onCardDragStart} className="p-2 bg-white rounded shadow cursor-move" onClick={() => setIsModalOpen(true)}>
-        <div className="font-medium">{card.title}</div>
-        {card.description && <div className="text-sm text-gray-500 line-clamp-2 pb-2">{card.description}</div>}
+        <div className="font-medium">
+          {((card: Card) => {
+            const truncatedText = card.title
+              ? card.title.length > TitleCharacterLimit
+                ? `${card.title.substring(0, TitleCharacterLimit)}...`
+                : card.title
+              : "";
+            return truncatedText;
+          })(card)}
+        </div>
+        {card.description && (
+          <p className="text-sm text-gray-500 line-clamp-5 mb-2 whitespace-pre-line">
+            {((card: Card) => {
+              const truncatedText = card.description
+                ? card.description.length > descriptionCharacterLimit
+                  ? `${card.description.substring(0, descriptionCharacterLimit)}...`
+                  : card.description
+                : "";
+              return truncatedText;
+            })(card)}
+          </p>
+        )}
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap gap-1">
-            {card.card_labels?.map((label: CardLabel, index: any) => (
+            {card.card_labels?.map((label: CardLabel) => (
               <span
-                key={"card" + index + label.label.id}
+                key={"card" + label.label.id}
                 className="px-2 py-0.5 rounded-full text-white text-xs font-semibold"
                 style={{ backgroundColor: label.label.color }}
               >

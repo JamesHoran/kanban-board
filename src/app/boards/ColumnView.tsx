@@ -5,46 +5,31 @@ import CardView from "./CardView";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Trash2 } from "lucide-react";
-import { Droppable, Draggable } from "@hello-pangea/dnd";
+import { Droppable, Draggable, DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { useBoard } from "./BoardContext";
 import { CreateCardDocument } from "@/gql/graphql";
 import { useMutation } from "@apollo/client";
-
-interface Card {
-  id: string;
-  position: number;
-  title: string;
-  description?: string | null;
-  card_labels: any;
-}
-
-interface Column {
-  id: string;
-  position: number;
-  name: string;
-  cards: Card[];
-}
+import { Card, Column, Label } from "./types"; // Import Card and Column from types.ts
 
 interface ColumnViewProps {
   column: Column;
-  dragHandleProps: any;
+  dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
   onAddCard: (title: string, columnId: string) => void;
   onDeleteCard: (cardId: string, columnId: string) => void;
   onDeleteColumn: (columnId: string) => void;
   onUpdateColumn: (columnId: string, newName: string) => void;
   onUpdateCard: (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => void;
-  handleCreateLabelOptimistic: any;
-  handleAssignLabelOptimistic: any;
-  handleRemoveLabelOptimistic: any;
-  handleDeleteLabelOptimistic: any;
+  handleCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
+  handleAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
+  handleRemoveLabelOptimistic: (cardId: string, labelId: string) => void;
+  handleDeleteLabelOptimistic: (labelId: string) => void;
   boardId: string;
-  allBoardLabels: { id: string; name: string; color: string }[];
+  allBoardLabels: Label[];
 }
 
 export default function ColumnView({
   column,
   dragHandleProps,
-  onAddCard,
   onDeleteCard,
   onDeleteColumn,
   onUpdateColumn,
@@ -78,7 +63,7 @@ export default function ColumnView({
 
     // 1. Optimistically create the new card with a temporary ID
     const tempId = `temp-card-${Date.now()}`;
-    const newCard = {
+    const newCard: Card = {
       id: tempId,
       position: column.cards.length > 0 ? column.cards[column.cards.length - 1].position + 1 : 1,
       title,

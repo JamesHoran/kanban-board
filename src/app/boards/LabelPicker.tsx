@@ -12,27 +12,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from "lucide-react";
+import { CardLabel, Label } from "./types";
 import { useBoard } from "./BoardContext";
-
-interface CardLabel {
-  card_id: string;
-  label: {
-    id: string;
-    name: string;
-    color: string;
-  };
-}
 
 interface LabelPickerProps {
   boardId: string;
   columnId: string;
   cardId: string;
   assignedLabels: CardLabel[];
-  onCreateLabelOptimistic: any;
-  onAssignLabelOptimistic: any;
-  onRemoveLabelOptimistic: any;
-  onDeleteLabelOptimistic: any;
-  allBoardLabels: { id: string; name: string; color: string }[];
+  onCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
+  onAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
+  onRemoveLabelOptimistic: (cardId: string, labelId: string) => void;
+  onDeleteLabelOptimistic: (labelId: string) => void;
+  allBoardLabels: Label[];
 }
 
 export default function LabelPicker({
@@ -94,9 +86,9 @@ export default function LabelPicker({
       // Logic for UN-assigning a label
       onRemoveLabelOptimistic(cardId, labelId);
       try {
-        const { data } = await removeLabelFromCard({ variables: { card_id: cardId, label_id: labelId } });
+        await removeLabelFromCard({ variables: { card_id: cardId, label_id: labelId } });
       } catch (error) {
-        // Subscription will correct state
+        console.error(`Error removing label ${error}`);
       }
     } else {
       // Logic for ASSIGNING a label
@@ -106,9 +98,9 @@ export default function LabelPicker({
       if (labelToAssign) {
         onAssignLabelOptimistic(cardId, labelId, labelToAssign.name, labelToAssign.color);
         try {
-          const { data } = await assignLabelToCard({ variables: { card_id: cardId, label_id: labelId } });
+          await assignLabelToCard({ variables: { card_id: cardId, label_id: labelId } });
         } catch (error) {
-          // Subscription will correct state
+          console.error(`Error assigning label ${error}`);
         }
       }
     }
@@ -122,11 +114,8 @@ export default function LabelPicker({
     onDeleteLabelOptimistic(labelId);
 
     try {
-      // Step 1: Delete the card_labels first to prevent data conflicts
-      const data = {
-        cardLabel: await deleteCardLabelsByLabelId({ variables: { label_id: labelId } }),
-        label: await deleteLabel({ variables: { id: labelId } }),
-      };
+      await deleteCardLabelsByLabelId({ variables: { label_id: labelId } });
+      await deleteLabel({ variables: { id: labelId } });
       // Step 2: Delete the label itself
     } catch (error) {
       console.error("Error deleting label:", error);
@@ -141,10 +130,10 @@ export default function LabelPicker({
           <label className="text-sm font-medium text-gray-700">Available Labels</label>
 
           <div className="flex flex-wrap gap-2 mt-2">
-            {allBoardLabels.map((label: any, index: number) => {
+            {allBoardLabels.map((label: Label) => {
               const assigned = isLabelAssigned(label.id);
               return (
-                <div key={"button" + index + label.id} className="relative group">
+                <div key={"button" + label.id} className="relative group">
                   <button
                     onClick={() => handleToggleLabel(label.id)}
                     className="px-2 py-1 hover:cursor-pointer rounded-full text-xs font-medium"
