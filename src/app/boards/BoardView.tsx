@@ -5,7 +5,7 @@ import ColumnView from "./ColumnView";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@apollo/client";
-import { Pencil, Trash2, Plus, Check } from "lucide-react";
+import { Pencil, Trash2, Plus, Check, X } from "lucide-react";
 import {
   CreateColumnDocument,
   UpdateBoardDocument,
@@ -518,6 +518,9 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
                       <Input placeholder="New column name" value={name} onChange={e => setName(e.target.value)} ref={inputRef} />
                       <Button size="icon" onClick={handleColumnConfirmAdd}>
                         <Check className="h-4 w-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={() => setShowInput(false)} className="text-gray-400 hover:text-red-500">
+                        <X className="h-4 w-4" />
                       </Button>
                     </div>
                   )}

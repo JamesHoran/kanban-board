@@ -4,12 +4,13 @@ import { useState } from "react";
 import CardView from "./CardView";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil, Trash2 } from "lucide-react";
 import { Droppable, Draggable, DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { useBoard } from "./BoardContext";
 import { CreateCardDocument } from "@/gql/graphql";
 import { useMutation } from "@apollo/client";
-import { Card, Column, Label } from "./types"; // Import Card and Column from types.ts
+import { Card, Column, Label } from "./types";
+import { Pencil, Trash2, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 interface ColumnViewProps {
   column: Column;
@@ -59,7 +60,10 @@ export default function ColumnView({
   };
 
   const handleAddCardClick = async () => {
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      toast.error("Please enter a card name.");
+      return;
+    }
 
     // 1. Optimistically create the new card with a temporary ID
     const tempId = `temp-card-${Date.now()}`;
@@ -178,7 +182,11 @@ export default function ColumnView({
 
       <div className="mt-2">
         <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="New card title" />
-        <Button className="mt-2 w-full" onClick={handleAddCardClick}>
+        <Button
+          className="mt-2 w-full text-gray-700 bg-gray-300 border border-gray-300 hover:bg-gray-400 transition-colors duration-200"
+          onClick={handleAddCardClick}
+        >
+          <Plus className="h-4 w-4" />
           Add card
         </Button>
       </div>

@@ -47,14 +47,20 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 kanban-board/.secrets:
 
-`HASURA_GRAPHQL_ADMIN_SECRET=yoursecrethere`
-`HASURA_GRAPHQL_JWT_SECRET=yourJWThere`
+```bash
+HASURA_GRAPHQL_ADMIN_SECRET='yoursecrethere'
+HASURA_GRAPHQL_JWT_SECRET='yourJWThere'
+NHOST_WEBHOOK_SECRET='nhost-webhook-secret'
+GRAFANA_ADMIN_PASSWORD='grafana-admin-password'
+```
 
 kanban-board/.env:
 
-`NEXT_PUBLIC_NHOST_SUBDOMAIN=yoursubdomainhere`
-`NEXT_PUBLIC_NHOST_REGION=yourregionhere`
-`ADMIN_KEY=youradminkeyhere`
+```bash
+NEXT_PUBLIC_NHOST_SUBDOMAIN=yoursubdomainhere
+NEXT_PUBLIC_NHOST_REGION=yourregionhere
+ADMIN_KEY=youradminkeyhere
+```
 
 ## run dev
 
@@ -67,3 +73,7 @@ kanban-board/.env:
 ## set up project to be hosted on verecel or whatever that is
 
 ## fix loading screen on boards load
+
+## clean up top of readme
+
+## create ci.yml

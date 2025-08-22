@@ -54,14 +54,18 @@ export default function BoardsPage() {
 
   if (!userData) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <p>Loading User Data...</p>
+      <div className="h-screen flex justify-center items-center">
+        <p>Loading...</p>
       </div>
     );
   }
 
   const handleCreate = async () => {
-    if (!name.trim() || !userData) return;
+    if (!name.trim()) {
+      toast.error("Please enter a board name.");
+      return;
+    }
+    if (!userData) return;
 
     // 1. Optimistically add the new board with a temporary ID
     const tempId = `temp-id-board-${Date.now()}`;
@@ -127,7 +131,7 @@ export default function BoardsPage() {
 
   if (loading)
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen flex justify-center items-center">
         <p>Loading boards...</p>
       </div>
     );
