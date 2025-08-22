@@ -9,7 +9,7 @@ import { useBoard } from "./BoardContext";
 import { CreateCardDocument } from "@/gql/graphql";
 import { useMutation } from "@apollo/client";
 import { Card, Column, Label } from "./types";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface ColumnViewProps {
@@ -125,10 +125,18 @@ export default function ColumnView({
               value={editedName}
               onChange={e => setEditedName(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleUpdateColumn()}
+              className="min-w-0"
             />
-            <Button onClick={handleUpdateColumn}>Save</Button>
-            <Button variant="ghost" onClick={() => setIsEditing(false)}>
-              Cancel
+            <Button size="icon" onClick={handleUpdateColumn} className="flex-shrink-0">
+              <Check className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setIsEditing(false)}
+              className="text-gray-400 hover:text-red-500 flex-shrink-0"
+            >
+              <X className="h-4 w-4" />
             </Button>
           </div>
         ) : (
