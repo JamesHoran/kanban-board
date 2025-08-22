@@ -73,6 +73,11 @@ export const cache = new InMemoryCache({
     boards: {
       keyFields: ["id"],
       fields: {
+        columns: {
+          merge(existing, incoming) {
+            return incoming;
+          },
+        },
         labels: {
           merge(
             existing: { id: string; name: string; color: string }[] = [],
