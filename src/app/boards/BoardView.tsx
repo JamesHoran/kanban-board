@@ -18,6 +18,7 @@ import {
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useBoard } from "./BoardContext";
 import { Board, Card } from "./types";
+import { toast } from "sonner";
 
 interface BoardViewProps {
   handleDeleteLocalBoard: () => void;
@@ -281,7 +282,10 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   const handleColumnConfirmAdd = async () => {
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      toast.error("Please enter a column name.");
+      return;
+    }
 
     // 1. Optimistically create the new column with a temporary ID
     const tempId = `temp-column-${Date.now()}`;
