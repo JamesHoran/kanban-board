@@ -1,1 +1,0 @@
-CREATE TABLE public.columns (id uuid NOT NULL, name text NOT NULL, position float8 NOT NULL, created_at timestamptz NOT NULL, board_id uuid NOT NULL, PRIMARY KEY (id), FOREIGN KEY (board_id) REFERENCES public.boards (id) ON UPDATE RESTRICT ON DELETE CASCADE);
