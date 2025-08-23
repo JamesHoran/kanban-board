@@ -1,1 +1,0 @@
-CREATE TABLE public.cards (id uuid NOT NULL, title text NOT NULL, description text, position float8 DEFAULT '1000.0' NOT NULL, created_at timestamptz DEFAULT now() NOT NULL, column_id uuid NOT NULL, PRIMARY KEY (id), FOREIGN KEY (column_id) REFERENCES public.columns (id) ON UPDATE RESTRICT ON DELETE CASCADE);
