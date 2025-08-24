@@ -14,6 +14,7 @@ export interface Card {
   position: number;
   title: string;
   description?: string | null;
+  due_date?: string | null;
   card_labels: CardLabel[];
 }
 

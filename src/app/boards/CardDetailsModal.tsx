@@ -12,7 +12,11 @@ interface CardDetailsModalProps {
   card: Card;
   column: Column;
   onClose: () => void;
-  onUpdateCard: (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => void;
+  onUpdateCard: (
+    cardId: string,
+    columnId: string,
+    update: { title?: string; description?: string | null; due_date?: string | null }
+  ) => void;
   boardId: string;
   handleCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
   handleAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
@@ -35,15 +39,17 @@ export default function CardDetailsModal({
 }: CardDetailsModalProps) {
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description || "");
+  const [due_date, setdue_date] = useState(card.due_date || "");
   const [activeTab, setActiveTab] = useState("details");
 
   useEffect(() => {
     setTitle(card.title);
     setDescription(card.description || "");
+    setdue_date(card.due_date || "");
   }, [card]);
 
   const handleSave = () => {
-    onUpdateCard(card.id, column.id, { title, description });
+    onUpdateCard(card.id, column.id, { title, description, due_date: due_date || null });
     onClose();
   };
 
@@ -52,7 +58,7 @@ export default function CardDetailsModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Card</DialogTitle>
-          <DialogDescription>Make changes to your card here. Click save when you're done.</DialogDescription>
+          <DialogDescription>Make changes to your card here. Click save when you&apos;re done.</DialogDescription>
         </DialogHeader>
 
         <div className="flex border-b border-gray-200 mt-4 mb-4">
@@ -87,6 +93,15 @@ export default function CardDetailsModal({
             <div>
               <label className="text-sm font-medium">Description</label>
               <Textarea value={description} onChange={e => setDescription(e.target.value)} className="mt-1 min-h-[200px]" />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Due Date</label>
+              <Input
+                type="date"
+                value={due_date ? due_date.split("T")[0] : ""}
+                onChange={e => setdue_date(e.target.value)}
+                className="mt-1"
+              />
             </div>
             <Button onClick={handleSave}>Save changes</Button>
           </div>
