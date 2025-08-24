@@ -44,7 +44,7 @@ update_permissions:
         - position
         - created_at
       filter: {}
-      check: null
+      check: {}
 delete_permissions:
   - role: user
     permission:

@@ -10,7 +10,11 @@ interface CardViewProps {
   card: Card;
   column: Column;
   onDeleteCard: () => void;
-  onUpdateCard: (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => void;
+  onUpdateCard: (
+    cardId: string,
+    columnId: string,
+    update: { title?: string; description?: string | null; due_date?: string | null }
+  ) => void;
   boardId: string;
   handleCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
   handleAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
@@ -33,10 +37,18 @@ export default function CardView({
 }: CardViewProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onCardDragStart = (e: React.DragEvent) => {
-    e.stopPropagation(); // prevents column drag
-    e.dataTransfer.setData("application/json", JSON.stringify({ type: "card", cardId: card.id, fromColumnId: column.id }));
-    e.dataTransfer.effectAllowed = "move";
+  const isOverdue = (due_date: string | null | undefined): boolean => {
+    if (!due_date) {
+      return false;
+    }
+    const today = new Date();
+    const date = new Date(due_date);
+
+    // Set time to midnight to compare dates only
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+
+    return date < today;
   };
 
   const descriptionCharacterLimit = 500;
@@ -44,8 +56,8 @@ export default function CardView({
 
   return (
     <>
-      <div draggable onDragStart={onCardDragStart} className="p-2 bg-white rounded shadow cursor-move" onClick={() => setIsModalOpen(true)}>
-        <div className="font-medium">
+      <div className="p-2 bg-white rounded shadow cursor-move w-full max-w-2xs" onClick={() => setIsModalOpen(true)}>
+        <div className="font-medium mb-3">
           {((card: Card) => {
             const truncatedText = card.title
               ? card.title.length > TitleCharacterLimit
@@ -67,20 +79,48 @@ export default function CardView({
             })(card)}
           </p>
         )}
+        <div className="flex flex-wrap gap-1 overflow-hidden max-w-full mb-2">
+          {card.card_labels?.map((label: CardLabel) => (
+            <span
+              key={"card" + label.label.id}
+              className="px-2 py-0.5 rounded-full text-white text-xs font-semibold truncate"
+              style={{ backgroundColor: label.label.color }}
+            >
+              {label.label.name}
+            </span>
+          ))}
+        </div>
         <div className="flex justify-between items-center">
-          <div className="flex flex-wrap gap-1">
-            {card.card_labels?.map((label: CardLabel) => (
-              <span
-                key={"card" + label.label.id}
-                className="px-2 py-0.5 rounded-full text-white text-xs font-semibold"
-                style={{ backgroundColor: label.label.color }}
+          {card.due_date ? (
+            <div className={`text-xs flex items-center gap-1 ${isOverdue(card.due_date) ? "text-red-500 font-semibold" : "text-gray-500"}`}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {label.label.name}
-              </span>
-            ))}
-          </div>
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>{new Date(card.due_date).toLocaleDateString()}</span>
+            </div>
+          ) : (
+            <div />
+          )}
           <div>
-            <Button onClick={onDeleteCard} variant="ghost" className="text-gray-400 hover:text-red-500 p-2 h-auto">
+            <Button
+              onClick={e => {
+                e.stopPropagation();
+                onDeleteCard();
+              }}
+              variant="ghost"
+              className="text-gray-400 hover:text-red-500 p-2 h-auto"
+            >
               <Trash2 className="h-5 w-5" />
             </Button>
           </div>

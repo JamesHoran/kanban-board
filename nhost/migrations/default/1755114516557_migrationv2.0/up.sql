@@ -19,7 +19,8 @@ create table cards (
   title text not null,
   description text,
   position double precision not null default 1000.0,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  due_date DATE
 );
 
 create table labels (

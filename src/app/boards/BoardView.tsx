@@ -160,6 +160,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       position: newPos,
       title,
       description: null, // Ensure description is included
+      due_date: null,
       card_labels: [],
     };
 
@@ -256,7 +257,11 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
     }
   };
 
-  const handleUpdateCard = async (cardId: string, columnId: string, update: { title?: string; description?: string | null }) => {
+  const handleUpdateCard = async (
+    cardId: string,
+    columnId: string,
+    update: { title?: string; description?: string | null; due_date?: string | null }
+  ) => {
     // Optimistic UI update: Update local state immediately
 
     setBoard(prevBoard => {
@@ -485,7 +490,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
               {board.columns.map((col, index) => (
                 <Draggable key={col.id} draggableId={col.id} index={index}>
                   {provided => (
-                    <div ref={provided.innerRef} {...provided.draggableProps} className="min-w-[280px] mx-2">
+                    <div ref={provided.innerRef} {...provided.draggableProps} className="min-w-xs mx-2">
                       {/* IMPORTANT: use margin not gap here bc gap causes UI issues when used on the above div's parent */}
                       <ColumnView
                         column={col}
@@ -507,7 +512,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
                 </Draggable>
               ))}
               {provided.placeholder}
-              <div className="min-w-[280px] px-3">
+              <div className="min-w-xs px-3">
                 <div className="flex flex-col gap-2 bg-white">
                   {!showInput ? (
                     <Button

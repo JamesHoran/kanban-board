@@ -13,12 +13,13 @@ mutation CreateColumn($board_id: uuid!, $name: String!, $position: float8) {
   }
 }
 
-mutation CreateCard($column_id: uuid!, $title: String!, $position: float8, $description: String) {
-  insert_cards_one(object: { column_id: $column_id, title: $title, position: $position, description: $description }) {
+mutation CreateCard($column_id: uuid!, $title: String!, $position: float8, $description: String, $due_date: date) {
+  insert_cards_one(object: { column_id: $column_id, title: $title, position: $position, description: $description, due_date: $due_date }) {
     id
     title
     position
     description
+    due_date
   }
 }
 
@@ -35,6 +36,7 @@ subscription GetBoardsForUser($userId: uuid!) {
         title
         description
         position
+        due_date
         card_labels {
           card_id
           label {
@@ -67,6 +69,7 @@ mutation UpdateCard($id: uuid!, $patch: cards_set_input!) {
     position
     description
     column_id
+    due_date
   }
 }
 

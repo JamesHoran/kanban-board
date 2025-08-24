@@ -18,36 +18,39 @@ insert_permissions:
     permission:
       check: {}
       columns:
-        - id
         - column_id
-        - title
-        - description
-        - position
         - created_at
+        - description
+        - due_date
+        - id
+        - position
+        - title
 select_permissions:
   - role: user
     permission:
       columns:
-        - id
-        - column_id
-        - title
-        - description
+        - due_date
         - position
+        - description
+        - title
         - created_at
+        - column_id
+        - id
       filter: {}
       allow_aggregations: true
 update_permissions:
   - role: user
     permission:
       columns:
-        - id
-        - column_id
-        - title
-        - description
+        - due_date
         - position
+        - description
+        - title
         - created_at
+        - column_id
+        - id
       filter: {}
-      check: null
+      check: {}
 delete_permissions:
   - role: user
     permission:

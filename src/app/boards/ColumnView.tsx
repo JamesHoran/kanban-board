@@ -117,7 +117,7 @@ export default function ColumnView({
   };
 
   return (
-    <div className="bg-gray-100 shadow-md rounded p-3 min-w-[280px]">
+    <div className="bg-gray-100 shadow-md rounded p-3 min-w-[20rem]">
       <div {...dragHandleProps} className="flex items-center justify-between mb-3">
         {isEditing ? (
           <div className="flex w-full gap-2 items-center">
