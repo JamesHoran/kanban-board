@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run GraphQL Codegen
-        run: pnpm run codegen
+      # - name: Run GraphQL Codegen
+      #   run: pnpm run codegen
 
       - name: Run linting
         run: pnpm run lint
