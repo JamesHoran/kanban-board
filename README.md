@@ -68,11 +68,7 @@ ADMIN_KEY=youradminkeyhere
 
 # to do
 
-## test everything in a new git repo using the cloud
-
 ## set up project to be hosted on verecel or whatever that is
-
-## fix loading screen on boards load
 
 ## clean up top of readme
 
