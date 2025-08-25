@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+env:
+  NEXT_PUBLIC_NHOST_SUBDOMAIN: your-subdomain-here
+  NEXT_PUBLIC_NHOST_REGION: your-region-here
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
