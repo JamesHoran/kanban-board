@@ -1,18 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useMutation, useSubscription } from "@apollo/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Plus } from "lucide-react";
-import BoardView from "./BoardView";
-import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
+import {
+  CreateBoardDocument,
+  DeleteBoardDocument,
+  GetBoardsForUserDocument,
+} from "@/gql/graphql";
+import { useMutation, useSubscription } from "@apollo/client";
 import { useUserData } from "@nhost/nextjs";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { BoardProvider } from "./BoardContext";
+import BoardView from "./BoardView";
 import { Board } from "./types";
-import { GetBoardsForUserDocument, CreateBoardDocument, DeleteBoardDocument } from "@/gql/graphql";
 
 export default function BoardsPage() {
   const userData = useUserData();
@@ -28,12 +38,16 @@ export default function BoardsPage() {
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
   const [localBoards, setLocalBoards] = useState<Board[]>([]);
 
-  const selectedBoard = localBoards.find(board => board.id === selectedBoardId);
+  const selectedBoard = localBoards.find(
+    (board) => board.id === selectedBoardId,
+  );
 
   useEffect(() => {
     if (data?.boards) {
       const boards = data.boards;
-      const selectedBoardExists = boards.some(board => board.id === selectedBoardId);
+      const selectedBoardExists = boards.some(
+        (board) => board.id === selectedBoardId,
+      );
 
       if (!selectedBoardExists && boards.length > 0) {
         setSelectedBoardId(boards[0].id);
@@ -76,7 +90,7 @@ export default function BoardsPage() {
       labels: [],
     };
 
-    setLocalBoards(prevBoards => [...prevBoards, newBoard]);
+    setLocalBoards((prevBoards) => [...prevBoards, newBoard]);
     setName("");
     setSelectedBoardId(tempId); // Select the new board optimistically
 
@@ -90,7 +104,11 @@ export default function BoardsPage() {
 
       if (newBoardId) {
         // 3. Update the state with the real ID from the server
-        setLocalBoards(prevBoards => prevBoards.map(board => (board.id === tempId ? { ...board, id: newBoardId } : board)));
+        setLocalBoards((prevBoards) =>
+          prevBoards.map((board) =>
+            board.id === tempId ? { ...board, id: newBoardId } : board,
+          ),
+        );
         setSelectedBoardId(newBoardId); // Select the real ID
         toast.success("Board created successfully!");
       } else {
@@ -100,7 +118,9 @@ export default function BoardsPage() {
       console.error("Error creating board:", error);
       toast.error("Failed to create board.");
       // Rollback the optimistic update on error
-      setLocalBoards(prevBoards => prevBoards.filter(board => board.id !== tempId));
+      setLocalBoards((prevBoards) =>
+        prevBoards.filter((board) => board.id !== tempId),
+      );
       setSelectedBoardId(null);
     }
   };
@@ -112,11 +132,17 @@ export default function BoardsPage() {
     const previousBoards = localBoards;
 
     // Optimistically remove the board from the local state
-    setLocalBoards(prevBoards => prevBoards.filter(board => board.id !== boardToDeleteId));
+    setLocalBoards((prevBoards) =>
+      prevBoards.filter((board) => board.id !== boardToDeleteId),
+    );
     setSelectedBoardId(null);
 
     try {
-      if (window.confirm("Are you sure you want to delete this board with it's labels, cards, and column?")) {
+      if (
+        window.confirm(
+          "Are you sure you want to delete this board with it's labels, cards, and column?",
+        )
+      ) {
         await deleteBoard({ variables: { board_id: boardToDeleteId } });
       }
       toast.success("Board deleted successfully!");
@@ -138,16 +164,19 @@ export default function BoardsPage() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 p-3 bg-white">
+    <div className="min-h-screen max-w-screen">
+      <header className="">
         <div className="flex items-center gap-4">
           {localBoards.length > 0 && (
-            <Select value={selectedBoardId || ""} onValueChange={value => setSelectedBoardId(value)}>
+            <Select
+              value={selectedBoardId || ""}
+              onValueChange={(value) => setSelectedBoardId(value)}
+            >
               <SelectTrigger className="w-[180px] border-gray-300 rounded-lg">
                 <SelectValue placeholder="Select a board" />
               </SelectTrigger>
               <SelectContent>
-                {localBoards.map(board => (
+                {localBoards.map((board) => (
                   <SelectItem key={board.id} value={board.id}>
                     {board.name}
                   </SelectItem>
@@ -159,7 +188,7 @@ export default function BoardsPage() {
         <div className="flex gap-2">
           <Input
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             placeholder="New board name"
             className="max-w-xs border-gray-300 rounded-lg focus:ring-blue-500"
           />
@@ -179,7 +208,9 @@ export default function BoardsPage() {
             <BoardView handleDeleteLocalBoard={handleDeleteLocalBoard} />
           </BoardProvider>
         ) : (
-          <p className="flex grow justify-center text-gray-500 mt-12">No boards yet—create one above.</p>
+          <p className="flex grow justify-center text-gray-500 mt-12">
+            No boards yet—create one above.
+          </p>
         )}
       </main>
       <Toaster position="bottom-right" />
