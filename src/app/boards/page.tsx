@@ -27,7 +27,6 @@ import {
 import { useMutation, useSubscription } from "@apollo/client";
 import { useUserData } from "@nhost/nextjs";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BoardProvider } from "./BoardContext";
@@ -77,8 +76,6 @@ export default function BoardsPage() {
       }
     }
   }, [data, selectedBoardId]);
-
-  const router = useRouter();
 
   if (!userData) {
     return <LoadingScreen message="Loading page..." />;
