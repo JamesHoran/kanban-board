@@ -11,7 +11,7 @@ import {
 } from "@/gql/graphql";
 import { apolloClient } from "@/lib/apolloclient";
 import { BOARD_TEMPLATES, seedUserBoards } from "@/lib/seed-data/index";
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { useEffect, useState } from "react";
 
 export type SeedingState =
@@ -38,11 +38,26 @@ export function useSeedingService(userId: string | undefined): SeedingState {
   const assignLabelResult = useMutation(AssignLabelToCardDocument);
 
   const mutations = {
-    createBoard: createBoardResult[0],
-    createLabel: createLabelResult[0],
-    createColumn: createColumnResult[0],
-    createCard: createCardResult[0],
-    assignLabelToCard: assignLabelResult[0],
+    createBoard: (options?: {
+      variables: { name: string; owner_id: string };
+    }) => createBoardResult[0]({ variables: options!.variables }),
+    createLabel: (options?: {
+      variables: { board_id: string; name: string; color: string };
+    }) => createLabelResult[0]({ variables: options!.variables }),
+    createColumn: (options?: {
+      variables: { board_id: string; name: string; position: number };
+    }) => createColumnResult[0]({ variables: options!.variables }),
+    createCard: (options?: {
+      variables: {
+        column_id: string;
+        title: string;
+        description?: string;
+        position: number;
+      };
+    }) => createCardResult[0]({ variables: options!.variables }),
+    assignLabelToCard: (options?: {
+      variables: { card_id: string; label_id: string };
+    }) => assignLabelResult[0]({ variables: options!.variables }),
   };
 
   useEffect(() => {
@@ -66,7 +81,7 @@ export function useSeedingService(userId: string | undefined): SeedingState {
 
         if (!mounted) return;
 
-        if (result.data.boards.length > 0) {
+        if (result?.data?.boards && result.data.boards.length > 0) {
           setState({ status: "complete" });
           return;
         }

@@ -11,7 +11,7 @@ import {
   UpdateCardDocument,
   UpdateColumnDocument,
 } from "@/gql/graphql";
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   DragDropContext,
   Draggable,

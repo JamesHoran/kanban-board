@@ -24,7 +24,7 @@ import {
   DeleteBoardDocument,
   GetBoardsForUserDocument,
 } from "@/gql/graphql";
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation, useSubscription } from "@apollo/client/react";
 import { useUserData } from "@nhost/nextjs";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
