@@ -2,6 +2,14 @@
 
 import { LoadingScreen } from "@/components/onboarding/LoadingScreen";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,6 +27,7 @@ import {
 import { useMutation, useSubscription } from "@apollo/client";
 import { useUserData } from "@nhost/nextjs";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BoardProvider } from "./BoardContext";
@@ -38,6 +47,8 @@ export default function BoardsPage() {
   const [name, setName] = useState("");
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
   const [localBoards, setLocalBoards] = useState<Board[]>([]);
+  const [createBoardDialogOpen, setCreateBoardDialogOpen] =
+    useState<boolean>(false);
 
   const selectedBoard = localBoards.find(
     (board) => board.id === selectedBoardId,
@@ -67,8 +78,10 @@ export default function BoardsPage() {
     }
   }, [data, selectedBoardId]);
 
+  const router = useRouter();
+
   if (!userData) {
-    return <LoadingScreen message="Loading Page..." />;
+    return <LoadingScreen message="Loading page..." />;
   }
 
   const handleCreate = async () => {
@@ -141,8 +154,8 @@ export default function BoardsPage() {
         )
       ) {
         await deleteBoard({ variables: { board_id: boardToDeleteId } });
+        toast.success("Board deleted successfully!");
       }
-      toast.success("Board deleted successfully!");
     } catch (error) {
       console.error("Error deleting board:", error);
       toast.error("Failed to delete board. Restoring...");
@@ -152,50 +165,77 @@ export default function BoardsPage() {
     }
   };
 
+  const handleCreateBoardDialog = () => {
+    setCreateBoardDialogOpen((state) => !state);
+  };
+
   if (loading) return <LoadingScreen message="Loading page..." />;
 
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="min-h-screen max-w-screen">
-      <header className="">
-        <div className="flex items-center gap-4">
-          {localBoards.length > 0 && (
-            <Select
-              value={selectedBoardId || ""}
-              onValueChange={(value) => setSelectedBoardId(value)}
+    <div className="flex flex-col min-h-screen max-w-screen">
+      <header className="p-1.5 border border-b-slate-300 shadow shadow-slate-300">
+        <div className="flex flex-row justify-between">
+          <div>
+            {localBoards.length > 0 && (
+              <Select
+                value={selectedBoardId || ""}
+                onValueChange={(value) => setSelectedBoardId(value)}
+              >
+                <SelectTrigger className="w-[180px] border-gray-300 rounded-lg">
+                  <SelectValue placeholder="Select a board" />
+                </SelectTrigger>
+                <SelectContent>
+                  {localBoards.map((board) => (
+                    <SelectItem key={board.id} value={board.id}>
+                      {board.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+          <div>
+            <Dialog
+              open={createBoardDialogOpen}
+              onOpenChange={handleCreateBoardDialog}
             >
-              <SelectTrigger className="w-[180px] border-gray-300 rounded-lg">
-                <SelectValue placeholder="Select a board" />
-              </SelectTrigger>
-              <SelectContent>
-                {localBoards.map((board) => (
-                  <SelectItem key={board.id} value={board.id}>
-                    {board.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="New board name"
-            className="max-w-xs border-gray-300 rounded-lg focus:ring-blue-500"
-          />
-          <Button
-            onClick={handleCreate}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            Create
-          </Button>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Board</DialogTitle>
+                  <DialogDescription>
+                    What would you like your board called?
+                  </DialogDescription>
+                </DialogHeader>
+                <Input
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
+                  placeholder="New board name"
+                  className="flex border-gray-300 rounded-lg focus:ring-blue-500"
+                />
+                <Button
+                  onClick={handleCreate}
+                  className="bg-primary hover:bg-primary/85 text-white font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  Create Board
+                </Button>
+              </DialogContent>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/85 text-white font-semibold rounded-lg flex items-center gap-1.5 transition-colors">
+                  <Plus className="h-4 w-4" />
+                  Create Board
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+          </div>
         </div>
       </header>
 
-      <main className="space-y-6 grow flex">
+      <main className="space-y-6 grow flex max-w-screen">
         {selectedBoard ? (
           <BoardProvider key={selectedBoardId} initialBoard={selectedBoard}>
             <BoardView handleDeleteLocalBoard={handleDeleteLocalBoard} />

@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import CardDetailsModal from "./CardDetailsModal";
-import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, Column, CardLabel, Label } from "./types";
+import { Card, CardLabel, Column, Label } from "./types";
 
 interface CardViewProps {
   card: Card;
@@ -13,11 +13,26 @@ interface CardViewProps {
   onUpdateCard: (
     cardId: string,
     columnId: string,
-    update: { title?: string; description?: string | null; due_date?: string | null }
+    update: {
+      title?: string;
+      description?: string | null;
+      due_date?: string | null;
+    },
   ) => void;
   boardId: string;
-  handleCreateLabelOptimistic: (name: string, color: string, columnId: string, cardId: string, tempId: string) => string;
-  handleAssignLabelOptimistic: (cardId: string, labelId: string, labelName: string, labelColor: string) => void;
+  handleCreateLabelOptimistic: (
+    name: string,
+    color: string,
+    columnId: string,
+    cardId: string,
+    tempId: string,
+  ) => string;
+  handleAssignLabelOptimistic: (
+    cardId: string,
+    labelId: string,
+    labelName: string,
+    labelColor: string,
+  ) => void;
   handleRemoveLabelOptimistic: (cardId: string, labelId: string) => void;
   handleDeleteLabelOptimistic: (labelId: string) => void;
   allBoardLabels: Label[];
@@ -56,7 +71,10 @@ export default function CardView({
 
   return (
     <>
-      <div className="p-2 bg-white rounded shadow cursor-move w-full max-w-2xs" onClick={() => setIsModalOpen(true)}>
+      <div
+        className="p-2 bg-white rounded shadow cursor-move w-full"
+        onClick={() => setIsModalOpen(true)}
+      >
         <div className="font-medium mb-3">
           {((card: Card) => {
             const truncatedText = card.title
@@ -83,7 +101,7 @@ export default function CardView({
           {card.card_labels?.map((label: CardLabel) => (
             <span
               key={"card" + label.label.id}
-              className="px-2 py-0.5 rounded-full text-white text-xs font-semibold truncate"
+              className="px-2 py-1 rounded-full text-white text-xs font-semibold truncate"
               style={{ backgroundColor: label.label.color }}
             >
               {label.label.name}
@@ -92,7 +110,9 @@ export default function CardView({
         </div>
         <div className="flex justify-between items-center">
           {card.due_date ? (
-            <div className={`text-xs flex items-center gap-1 ${isOverdue(card.due_date) ? "text-red-500 font-semibold" : "text-gray-500"}`}>
+            <div
+              className={`text-xs flex items-center gap-1 ${isOverdue(card.due_date) ? "text-red-500 font-semibold" : "text-gray-500"}`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
@@ -114,7 +134,7 @@ export default function CardView({
           )}
           <div>
             <Button
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 onDeleteCard();
               }}
