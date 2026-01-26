@@ -1,4 +1,3 @@
-// src/app/page.tsx
 "use client";
 
 import { ErrorScreen } from "@/components/onboarding/ErrorScreen";
@@ -36,7 +35,7 @@ export default function Home() {
 
   // Don't render until mounted on client (prevents hydration error)
   if (!mounted) {
-    return <LoadingScreen message="Loading..." />;
+    return <LoadingScreen message="Loading the app..." />;
   }
 
   // Handle auth states

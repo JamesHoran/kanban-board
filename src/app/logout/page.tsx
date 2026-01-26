@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { LoadingScreen } from "@/components/onboarding/LoadingScreen";
 import { useNhostClient } from "@nhost/nextjs";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function LogOutPage() {
@@ -16,9 +17,5 @@ export default function LogOutPage() {
     logOut();
   }, [nhost, router]);
 
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <p className="text-lg">Logging you out...</p>
-    </div>
-  );
+  return <LoadingScreen message="Logging you out..." />;
 }

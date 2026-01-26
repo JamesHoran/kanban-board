@@ -1,5 +1,6 @@
 "use client";
 
+import { LoadingScreen } from "@/components/onboarding/LoadingScreen";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -67,11 +68,7 @@ export default function BoardsPage() {
   }, [data, selectedBoardId]);
 
   if (!userData) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <p>Loading...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading Page..." />;
   }
 
   const handleCreate = async () => {
@@ -155,12 +152,8 @@ export default function BoardsPage() {
     }
   };
 
-  if (loading)
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <p>Loading boards...</p>
-      </div>
-    );
+  if (loading) return <LoadingScreen message="Loading page..." />;
+
   if (error) return <p>Error: {error.message}</p>;
 
   return (

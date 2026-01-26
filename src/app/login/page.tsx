@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { nhost } from "@/lib/nhost";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      router.push("/"); // Redirect to the boards page on successful login
+      router.push("/boards"); // Redirect to the boards page on successful login
     }
   };
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring focus:border-blue-400"
           required
         />
@@ -58,7 +58,7 @@ export default function LoginPage() {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring focus:border-blue-400"
           required
         />
