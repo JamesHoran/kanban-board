@@ -1,24 +1,29 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import ColumnView from "./ColumnView";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useMutation } from "@apollo/client";
-import { Pencil, Trash2, Plus, Check, X } from "lucide-react";
 import {
-  CreateColumnDocument,
-  UpdateBoardDocument,
-  UpdateColumnDocument,
-  UpdateCardDocument,
   CreateCardDocument,
+  CreateColumnDocument,
   DeleteCardDocument,
   DeleteColumnDocument,
+  UpdateBoardDocument,
+  UpdateCardDocument,
+  UpdateColumnDocument,
 } from "@/gql/graphql";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { useBoard } from "./BoardContext";
-import { Board, Card } from "./types";
+import { useMutation } from "@apollo/client/react";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd";
+import { Check, Pencil, Plus, Trash2, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useBoard } from "./BoardContext";
+import ColumnView from "./ColumnView";
+import { Board, Card } from "./types";
 
 interface BoardViewProps {
   handleDeleteLocalBoard: () => void;
@@ -59,7 +64,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
     }
 
     // Optimistic UI update: Update the local 'board' state immediately
-    setBoard(prevBoard => ({ ...prevBoard, name: editedName.trim() }));
+    setBoard((prevBoard) => ({ ...prevBoard, name: editedName.trim() }));
 
     try {
       await updateBoard({
@@ -87,7 +92,11 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       if (source.index === destination.index) return;
 
       // 1. Local reorder
-      const newColumns = reorder(board.columns, source.index, destination.index);
+      const newColumns = reorder(
+        board.columns,
+        source.index,
+        destination.index,
+      );
 
       // 2. Assign new sparse positions
       const updatedColumns = newColumns.map((col, idx) => ({
@@ -95,7 +104,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
         position: (idx + 1) * 1000,
       }));
 
-      setBoard(prev => ({ ...prev, columns: updatedColumns }));
+      setBoard((prev) => ({ ...prev, columns: updatedColumns }));
 
       // 3. Persist
       for (const col of updatedColumns) {
@@ -107,15 +116,24 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
     }
 
     if (type === "card") {
-      const startCol = board.columns.find(c => c.id === source.droppableId);
-      const endCol = board.columns.find(c => c.id === destination.droppableId);
+      const startCol = board.columns.find((c) => c.id === source.droppableId);
+      const endCol = board.columns.find(
+        (c) => c.id === destination.droppableId,
+      );
       if (!startCol || !endCol) return;
 
       // Clone for mutation
-      const updatedBoard = { ...board, columns: structuredClone(board.columns) };
+      const updatedBoard = {
+        ...board,
+        columns: structuredClone(board.columns),
+      };
 
-      const sourceColumn = updatedBoard.columns.find(c => c.id === startCol.id)!;
-      const destinationColumn = updatedBoard.columns.find(c => c.id === endCol.id)!;
+      const sourceColumn = updatedBoard.columns.find(
+        (c) => c.id === startCol.id,
+      )!;
+      const destinationColumn = updatedBoard.columns.find(
+        (c) => c.id === endCol.id,
+      )!;
 
       const movedCard = sourceColumn.cards[source.index];
 
@@ -123,7 +141,8 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       destinationColumn.cards.splice(destination.index, 0, movedCard);
 
       // Reassign positions in both columns
-      const updateCards = (cards: Card[]) => cards.map((card, idx) => ({ ...card, position: (idx + 1) * 1000 }));
+      const updateCards = (cards: Card[]) =>
+        cards.map((card, idx) => ({ ...card, position: (idx + 1) * 1000 }));
 
       sourceColumn.cards = updateCards(sourceColumn.cards);
       destinationColumn.cards = updateCards(destinationColumn.cards);
@@ -148,7 +167,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   const handleCreateCard = async (title: string, columnId: string) => {
-    const column = board.columns.find(col => col.id === columnId);
+    const column = board.columns.find((col) => col.id === columnId);
     if (!column) return;
     const last = column.cards[column.cards.length - 1];
     const newPos = last ? last.position + 1000 : 1000;
@@ -164,8 +183,10 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       card_labels: [],
     };
 
-    setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.map(col => (col.id === columnId ? { ...col, cards: [...col.cards, newCard] } : col));
+    setBoard((prevBoard) => {
+      const updatedColumns = prevBoard.columns.map((col) =>
+        col.id === columnId ? { ...col, cards: [...col.cards, newCard] } : col,
+      );
       return { ...prevBoard, columns: updatedColumns };
     });
 
@@ -177,14 +198,18 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
       // Update the local state with the real ID from the server
       if (data?.insert_cards_one) {
-        setBoard(prevBoard => {
-          const updatedColumns = prevBoard.columns.map(col =>
+        setBoard((prevBoard) => {
+          const updatedColumns = prevBoard.columns.map((col) =>
             col.id === columnId
               ? {
                   ...col,
-                  cards: col.cards.map(card => (card.id === tempId ? { ...card, id: data.insert_cards_one!.id } : card)),
+                  cards: col.cards.map((card) =>
+                    card.id === tempId
+                      ? { ...card, id: data.insert_cards_one!.id }
+                      : card,
+                  ),
                 }
-              : col
+              : col,
           );
           return { ...prevBoard, columns: updatedColumns };
         });
@@ -192,9 +217,11 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
     } catch (error) {
       console.error("Error creating card:", error);
       // Revert the optimistic update on failure
-      setBoard(prevBoard => {
-        const updatedColumns = prevBoard.columns.map(col =>
-          col.id === columnId ? { ...col, cards: col.cards.filter(card => card.id !== tempId) } : col
+      setBoard((prevBoard) => {
+        const updatedColumns = prevBoard.columns.map((col) =>
+          col.id === columnId
+            ? { ...col, cards: col.cards.filter((card) => card.id !== tempId) }
+            : col,
         );
         return { ...prevBoard, columns: updatedColumns };
       });
@@ -203,9 +230,11 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
   const handleDeleteCard = async (cardId: string, columnId: string) => {
     // Optimistic UI update: remove card from local state immediately
-    setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.map(col =>
-        col.id === columnId ? { ...col, cards: col.cards.filter(card => card.id !== cardId) } : col
+    setBoard((prevBoard) => {
+      const updatedColumns = prevBoard.columns.map((col) =>
+        col.id === columnId
+          ? { ...col, cards: col.cards.filter((card) => card.id !== cardId) }
+          : col,
       );
       return { ...prevBoard, columns: updatedColumns };
     });
@@ -221,13 +250,19 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
   // Inside BoardView.tsx, with the other handler functions
   const handleDeleteColumn = async (columnId: string) => {
-    if (!window.confirm("Are you sure you want to delete this column and all its cards?")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this column and all its cards?",
+      )
+    ) {
       return;
     }
 
     // Optimistic UI update: remove column from local state immediately
-    setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.filter(col => col.id !== columnId);
+    setBoard((prevBoard) => {
+      const updatedColumns = prevBoard.columns.filter(
+        (col) => col.id !== columnId,
+      );
       return { ...prevBoard, columns: updatedColumns };
     });
 
@@ -241,8 +276,10 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
   const handleUpdateColumn = async (columnId: string, newName: string) => {
     // Optimistic UI update: Update local state immediately
-    setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.map(col => (col.id === columnId ? { ...col, name: newName } : col));
+    setBoard((prevBoard) => {
+      const updatedColumns = prevBoard.columns.map((col) =>
+        col.id === columnId ? { ...col, name: newName } : col,
+      );
       return { ...prevBoard, columns: updatedColumns };
     });
 
@@ -260,18 +297,24 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   const handleUpdateCard = async (
     cardId: string,
     columnId: string,
-    update: { title?: string; description?: string | null; due_date?: string | null }
+    update: {
+      title?: string;
+      description?: string | null;
+      due_date?: string | null;
+    },
   ) => {
     // Optimistic UI update: Update local state immediately
 
-    setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.map(col =>
+    setBoard((prevBoard) => {
+      const updatedColumns = prevBoard.columns.map((col) =>
         col.id === columnId
           ? {
               ...col,
-              cards: col.cards.map(card => (card.id === cardId ? { ...card, ...update } : card)),
+              cards: col.cards.map((card) =>
+                card.id === cardId ? { ...card, ...update } : card,
+              ),
             }
-          : col
+          : col,
       );
       return { ...prevBoard, columns: updatedColumns };
     });
@@ -294,7 +337,10 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
     // 1. Optimistically create the new column with a temporary ID
     const tempId = `temp-column-${Date.now()}`;
-    const newPosition = board.columns.length > 0 ? board.columns[board.columns.length - 1].position + 1 : 1;
+    const newPosition =
+      board.columns.length > 0
+        ? board.columns[board.columns.length - 1].position + 1
+        : 1;
     const newColumn = {
       id: tempId,
       name,
@@ -302,7 +348,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
       cards: [],
     };
 
-    setBoard(prevBoard => ({
+    setBoard((prevBoard) => ({
       ...prevBoard,
       columns: [...prevBoard.columns, newColumn],
     }));
@@ -334,7 +380,13 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   // Function to handle optimistic creation of a new label
-  const handleCreateLabelOptimistic = (name: string, color: string, columnId: string, cardId: string, tempId: string) => {
+  const handleCreateLabelOptimistic = (
+    name: string,
+    color: string,
+    columnId: string,
+    cardId: string,
+    tempId: string,
+  ) => {
     const newLabel = {
       __typename: "card_labels",
       card_id: cardId,
@@ -345,12 +397,12 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
         color,
       },
     };
-    setBoard(prevBoard => {
+    setBoard((prevBoard) => {
       // Assuming you have the columnId and cardId where the new label should be added
-      const updatedColumns = prevBoard.columns.map(column => {
+      const updatedColumns = prevBoard.columns.map((column) => {
         // Check if this is the column we want to update
         if (column.id === columnId) {
-          const updatedCards = column.cards.map(card => {
+          const updatedCards = column.cards.map((card) => {
             // Check if this is the card we want to update
             if (card.id === cardId) {
               // Add the new label to the card's card_labels
@@ -380,11 +432,16 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   // Function to handle optimistic assignment of a label to a card
-  const handleAssignLabelOptimistic = (cardId: string, labelId: string, labelName: string, labelColor: string) => {
+  const handleAssignLabelOptimistic = (
+    cardId: string,
+    labelId: string,
+    labelName: string,
+    labelColor: string,
+  ) => {
     setBoard((prevBoard: Board) => {
-      const updatedColumns = prevBoard.columns.map(column => ({
+      const updatedColumns = prevBoard.columns.map((column) => ({
         ...column,
-        cards: column.cards.map(card => {
+        cards: column.cards.map((card) => {
           if (card.id === cardId) {
             const newAssignedLabel = {
               card_id: card.id,
@@ -407,16 +464,18 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   const handleRemoveLabelOptimistic = (cardId: string, labelId: string) => {
-    setBoard(prevBoard => {
-      const updatedColumns = prevBoard.columns.map(column => ({
+    setBoard((prevBoard) => {
+      const updatedColumns = prevBoard.columns.map((column) => ({
         ...column,
-        cards: column.cards.map(card => {
+        cards: column.cards.map((card) => {
           if (card.id === cardId) {
             return {
               ...card,
               card_labels:
                 card.card_labels?.filter(
-                  (assignedLabel: { label: { id: string; name: string; color: string } }) => assignedLabel.label.id !== labelId
+                  (assignedLabel: {
+                    label: { id: string; name: string; color: string };
+                  }) => assignedLabel.label.id !== labelId,
                 ) ?? [],
             };
           }
@@ -428,18 +487,21 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   const handleDeleteLabelOptimistic = (labelId: string) => {
-    setBoard(prevBoard => {
+    setBoard((prevBoard) => {
       // 1. Filter out the label from the top-level 'labels' array
-      const updatedLabels = prevBoard.labels?.filter(label => label.id !== labelId) ?? [];
+      const updatedLabels =
+        prevBoard.labels?.filter((label) => label.id !== labelId) ?? [];
 
       // 2. Filter the label from every card it is assigned to.
-      const updatedColumns = prevBoard.columns.map(column => ({
+      const updatedColumns = prevBoard.columns.map((column) => ({
         ...column,
-        cards: column.cards.map(card => ({
+        cards: column.cards.map((card) => ({
           ...card,
           card_labels:
             card.card_labels?.filter(
-              (assignedLabel: { label: { id: string; name: string; color: string } }) => assignedLabel.label.id !== labelId
+              (assignedLabel: {
+                label: { id: string; name: string; color: string };
+              }) => assignedLabel.label.id !== labelId,
             ) ?? [],
         })),
       }));
@@ -454,14 +516,14 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
   };
 
   return (
-    <section className="p-4 grow">
+    <section className="flex flex-col grow max-w-screen">
       <div className="flex items-center justify-between mb-4">
         {isEditing ? (
-          <div className="flex w-full gap-2 items-center">
+          <div className="flex w-full gap-2 items-center p-2">
             <Input
               value={editedName}
-              onChange={e => setEditedName(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleUpdateBoard()}
+              onChange={(e) => setEditedName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleUpdateBoard()}
             />
             <Button onClick={handleUpdateBoard}>Save</Button>
             <Button variant="ghost" onClick={() => setIsEditing(false)}>
@@ -469,13 +531,21 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
             </Button>
           </div>
         ) : (
-          <div className="flex items-center w-full justify-between">
+          <div className="grow flex items-center w-full justify-between p-2">
             <h2 className="text-xl font-semibold">{board.name}</h2>
             <div className="flex items-center gap-2">
-              <Button onClick={() => setIsEditing(true)} variant="ghost" className="text-gray-400 hover:text-blue-500 p-2 h-auto">
+              <Button
+                onClick={() => setIsEditing(true)}
+                variant="ghost"
+                className="text-gray-400 hover:text-blue-500 p-2"
+              >
                 <Pencil className="h-5 w-5" />
               </Button>
-              <Button onClick={handleDeleteLocalBoard} variant="ghost" className="text-gray-400 hover:text-red-500 p-2 h-auto">
+              <Button
+                onClick={handleDeleteLocalBoard}
+                variant="ghost"
+                className="text-gray-400 hover:text-red-500 p-2"
+              >
                 <Trash2 className="h-5 w-5" />
               </Button>
             </div>
@@ -485,12 +555,20 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="columns" direction="horizontal" type="column">
-          {provided => (
-            <div className="flex overflow-x-auto pb-2 pt-1" ref={provided.innerRef} {...provided.droppableProps}>
+          {(provided) => (
+            <div
+              className="grow flex max-w-screen overflow-x-scroll px-2 pb-2 py-1"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               {board.columns.map((col, index) => (
                 <Draggable key={col.id} draggableId={col.id} index={index}>
-                  {provided => (
-                    <div ref={provided.innerRef} {...provided.draggableProps} className="min-w-xs mx-2">
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      className="min-w-xs mx-2 max-w-2xs"
+                    >
                       {/* IMPORTANT: use margin not gap here bc gap causes UI issues when used on the above div's parent */}
                       <ColumnView
                         column={col}
@@ -501,10 +579,18 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
                         onUpdateColumn={handleUpdateColumn}
                         onUpdateCard={handleUpdateCard}
                         boardId={board.id}
-                        handleCreateLabelOptimistic={handleCreateLabelOptimistic}
-                        handleAssignLabelOptimistic={handleAssignLabelOptimistic}
-                        handleRemoveLabelOptimistic={handleRemoveLabelOptimistic}
-                        handleDeleteLabelOptimistic={handleDeleteLabelOptimistic}
+                        handleCreateLabelOptimistic={
+                          handleCreateLabelOptimistic
+                        }
+                        handleAssignLabelOptimistic={
+                          handleAssignLabelOptimistic
+                        }
+                        handleRemoveLabelOptimistic={
+                          handleRemoveLabelOptimistic
+                        }
+                        handleDeleteLabelOptimistic={
+                          handleDeleteLabelOptimistic
+                        }
                         allBoardLabels={board.labels}
                       />
                     </div>
@@ -512,7 +598,7 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
                 </Draggable>
               ))}
               {provided.placeholder}
-              <div className="min-w-xs px-3">
+              <div className="min-w-xs mx-2 max-w-2xs">
                 <div className="flex flex-col gap-2 bg-white">
                   {!showInput ? (
                     <Button
@@ -524,11 +610,21 @@ export default function BoardView({ handleDeleteLocalBoard }: BoardViewProps) {
                     </Button>
                   ) : (
                     <div className="flex gap-2">
-                      <Input placeholder="New column name" value={name} onChange={e => setName(e.target.value)} ref={inputRef} />
+                      <Input
+                        placeholder="New column name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        ref={inputRef}
+                      />
                       <Button size="icon" onClick={handleColumnConfirmAdd}>
                         <Check className="h-4 w-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => setShowInput(false)} className="text-gray-400 hover:text-red-500">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setShowInput(false)}
+                        className="text-gray-400 hover:text-red-500"
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>

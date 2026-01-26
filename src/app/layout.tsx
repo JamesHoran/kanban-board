@@ -3,7 +3,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { NhostProvider } from "@nhost/nextjs";
 import { nhost } from "../lib/nhost";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import { apolloClient } from "@/lib/apolloclient";
 import { authTokenVar } from "@/lib/apolloclient";
 import "./globals.css";

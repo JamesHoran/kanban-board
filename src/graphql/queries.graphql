@@ -6,15 +6,31 @@ mutation CreateBoard($name: String!, $owner_id: uuid!) {
 }
 
 mutation CreateColumn($board_id: uuid!, $name: String!, $position: float8) {
-  insert_columns_one(object: { board_id: $board_id, name: $name, position: $position }) {
+  insert_columns_one(
+    object: { board_id: $board_id, name: $name, position: $position }
+  ) {
     id
     name
     position
   }
 }
 
-mutation CreateCard($column_id: uuid!, $title: String!, $position: float8, $description: String, $due_date: date) {
-  insert_cards_one(object: { column_id: $column_id, title: $title, position: $position, description: $description, due_date: $due_date }) {
+mutation CreateCard(
+  $column_id: uuid!
+  $title: String!
+  $position: float8
+  $description: String
+  $due_date: date
+) {
+  insert_cards_one(
+    object: {
+      column_id: $column_id
+      title: $title
+      position: $position
+      description: $description
+      due_date: $due_date
+    }
+  ) {
     id
     title
     position
@@ -24,6 +40,38 @@ mutation CreateCard($column_id: uuid!, $title: String!, $position: float8, $desc
 }
 
 subscription GetBoardsForUser($userId: uuid!) {
+  boards(where: { owner_id: { _eq: $userId } }) {
+    id
+    name
+    columns(order_by: { position: asc }) {
+      id
+      name
+      position
+      cards(order_by: { position: asc }) {
+        id
+        title
+        description
+        position
+        due_date
+        card_labels {
+          card_id
+          label {
+            id
+            name
+            color
+          }
+        }
+      }
+    }
+    labels {
+      id
+      name
+      color
+    }
+  }
+}
+
+query GetBoardsForUserQuery($userId: uuid!) {
   boards(where: { owner_id: { _eq: $userId } }) {
     id
     name
@@ -88,7 +136,10 @@ mutation UpdateColumnPosition($id: uuid!, $position: float8!) {
 }
 
 mutation UpdateCardPosition($id: uuid!, $column_id: uuid!, $position: float8!) {
-  update_cards_by_pk(pk_columns: { id: $id }, _set: { column_id: $column_id, position: $position }) {
+  update_cards_by_pk(
+    pk_columns: { id: $id }
+    _set: { column_id: $column_id, position: $position }
+  ) {
     id
   }
 }
@@ -112,7 +163,9 @@ mutation DeleteColumn($id: uuid!) {
 }
 
 mutation CreateLabel($board_id: uuid!, $name: String!, $color: String!) {
-  insert_labels_one(object: { board_id: $board_id, name: $name, color: $color }) {
+  insert_labels_one(
+    object: { board_id: $board_id, name: $name, color: $color }
+  ) {
     id
     name
     color
@@ -127,7 +180,9 @@ mutation AssignLabelToCard($card_id: uuid!, $label_id: uuid!) {
 }
 
 mutation RemoveLabelFromCard($card_id: uuid!, $label_id: uuid!) {
-  delete_card_labels(where: { card_id: { _eq: $card_id }, label_id: { _eq: $label_id } }) {
+  delete_card_labels(
+    where: { card_id: { _eq: $card_id }, label_id: { _eq: $label_id } }
+  ) {
     affected_rows
   }
 }
